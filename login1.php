@@ -1,6 +1,6 @@
 <?php
   include "connect_db.php";
-  //include "navbar.php";
+  // include "navbar.php";
 ?>
 
 <!DOCTYPE html>
@@ -72,11 +72,13 @@ label {
 </section>
 <?php
 
-    if(isset($_POST['submit']))
-  {
+    if(isset($_POST['submit'])){
+      $username = isset($_POST['username']) ? trim($_POST['username']) : '';
+      $password = isset($_POST['password']) ? $_POST['password'] : '';
+      
       if ($_POST['user']=='admin')
       {
-        $count=0;
+      $count=0;
       $res=pg_query($db,"SELECT * FROM `admin` WHERE username='$_POST[username]' && password='$_POST[password]';");
 
       $row= pg_fetch_assoc($res);
