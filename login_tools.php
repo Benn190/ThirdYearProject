@@ -14,7 +14,7 @@ function load($page = 'login.php')
 }
 
 # Function to check email address and password.
-function validate($link, $email = '', $pwd = '')
+function validate($conn, $email = '', $pwd = '')
 {
     # Initialize errors array.
     $errors = array();
@@ -22,19 +22,19 @@ function validate($link, $email = '', $pwd = '')
     if (empty($email)) {
         $errors[] = 'Enter your email address.';
     } else {
-        $e = pg_escape_string($link, trim($email));
+        $e = pg_escape_string($conn, trim($email));
     }
     # Check password field.
     if (empty($pwd)) {
         $errors[] = 'Enter your password.';
     } else {
-        $p = pg_escape_string($link, trim($pwd));
+        $p = pg_escape_string($conn, trim($pwd));
     }
     # On success, retrieve user_id, first_name, and last name from 'users' database.
     if (empty($errors)) {
         $q = "SELECT user_id, first_name, last_name FROM users WHERE email='$e' AND
               pass=SHA256('$p')";
-        $r = pg_query($link, $q);
+        $r = pg_query($conn, $q);
         if (@pg_num_rows($r) == 1) {
             $row = pg_fetch_array($r, NULL, PGSQL_ASSOC);
             return array(true, $row);

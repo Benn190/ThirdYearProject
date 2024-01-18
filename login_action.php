@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     require('login_tools.php');
 
     # Check login.
-    list($check, $data) = validate($link, $_POST['email'], $_POST['pass']);
+    list($check, $data) = validate($conn, $_POST['email'], $_POST['pass']);
 
     # On success set session data and display the logged-in page.
     if ($check) {
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     # Close database connection.
-    pg_close($link);
+    pg_close($conn);
 }
 
 # Continue to display the login page on failure.

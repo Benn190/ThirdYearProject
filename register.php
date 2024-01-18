@@ -4,7 +4,7 @@ if (isset($_POST['register'])) {
   require_once "connect_db.php";
 
     // Prepare and execute the SQL statement
-    $stmt = pg_prepare($pg_conn, "insert_user", "INSERT INTO users (username, email, password) VALUES ($1, $2, $3)");
+    $stmt = pg_prepare($conn, "insert_user", "INSERT INTO users (username, email, password) VALUES ($1, $2, $3)");
     
     // Get the form data
     $username = $_POST['username'];
@@ -15,17 +15,17 @@ if (isset($_POST['register'])) {
     $password = password_hash($password, PASSWORD_DEFAULT);
 
     // Execute the SQL statement
-    $result = pg_execute($pg_conn, "insert_user", array($username, $email, $password));
+    $result = pg_execute($conn, "insert_user", array($username, $email, $password));
 
     // Check the result
     if ($result) {
         echo "New account created successfully!";
     } else {
-        echo "Error: " . pg_last_error($pg_conn);
+        echo "Error: " . pg_last_error($conn);
     }
 
     // Close the connection
-    pg_close($pg_conn);
+    pg_close($conn);
 }
 ?>
 
