@@ -1,6 +1,6 @@
 <?php
   include "connect_db.php";
-  include "navbar.php";
+  //include "navbar.php";
 ?>
 
 <!DOCTYPE html>
