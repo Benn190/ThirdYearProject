@@ -1,6 +1,6 @@
 <?php
-  include "connection.php";
-  include "navbar.php";
+  include "connect_db.php";
+  //include "navbar.php";
 ?>
 
 <!DOCTYPE html>
@@ -43,9 +43,9 @@ label {
 
 <section>
   <div class="log_img"style="height: 190%;background-image: url(images/imagelogin.jpg);">
-   <br>
+    <br>
     <div class="box1"style =" background-color: maroon;">
-        <h1 style="text-align: center; font-size: 35px;font-family: Lucida Console;">Library Management System</h1>
+        <h1 style="text-align: center; font-size: 35px;font-family: Lucida Console;">ShareSync</h1>
         <h1 style="text-align: center; font-size: 25px;">User Login Form</h1><br>
       <form  name="login" action="" method="post">
         <b><p style ="padding-left: 50px ; font-size :15px; font-weight :700;"> Login as </p></b>
@@ -122,16 +122,16 @@ label {
 
           if($count==0)
             {
-           ?>
+              ?>
 
           <div class="alert alert-danger" style="width: 600px; margin-left: 370px; background-color: #de1313; color: white">
             <strong>The username and password doesn't match</strong>
           </div>
-           <?php
-             }
+          <?php
+            }
           else
             {
-           $_SESSION['login_user'] = $_POST['username'];
+            $_SESSION['login_user'] = $_POST['username'];
             $_SESSION['pic']= $row['pic'];
 
             ?>
