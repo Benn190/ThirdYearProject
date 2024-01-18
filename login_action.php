@@ -15,16 +15,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         # Access session.
         session_start();
         $_SESSION['user_id'] = $data['user_id'];
-        $_SESSION['first_name'] = $data['first_name'];
-        $_SESSION['last_name'] = $data['last_name'];
-        load('home.php');
+        $_SESSION['username'] = $data['username'];
+        $_SESSION['email'] = $data['email'];
+        load('home.html');
     } else {
         # On failure set errors.
         $errors = $data;
     }
 
     # Close database connection.
-    pg_close($link);
+    pg_close($conn);
 }
 
 # Continue to display the login page on failure.
