@@ -1,6 +1,5 @@
 <?php
   include "connect_db.php";
-  // include "navbar.php";
 ?>
 
 <!DOCTYPE html>
@@ -8,45 +7,17 @@
 <head>
 
   <title>User Login</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    
-  
-  <style type="text/css">
-    section
-    {
-      margin-top: -20px;
-      width : 100%;
-    }
-  .box1
-{
-	height: 500px;
-	width: 450px;
-	background-color: black;
-	margin: 70px auto;
-	opacity: .8;
-	color: white;
-	padding: 20px;
-}
-
-label {
-
-  font-size: 18px;
-  font-weight :600 ;
-}
-  </style>
 </head>
 <body>
 
 <section>
-  <div class="log_img"style="height: 190%;background-image: url(images/imagelogin.jpg);">
+  <div>
     <br>
-    <div class="box1"style =" background-color: maroon;">
-        <h1 style="text-align: center; font-size: 35px;font-family: Lucida Console;">ShareSync</h1>
-        <h1 style="text-align: center; font-size: 25px;">User Login Form</h1><br>
+    <div>
+        <h1>ShareSync</h1>
+        <h1>User Login Form</h1><br>
       <form  name="login" action="" method="post">
         <b><p style ="padding-left: 50px ; font-size :15px; font-weight :700;"> Login as </p></b>
 
@@ -56,15 +27,15 @@ label {
         <label  for= "user">User </label>
 
         <div class="login">
-          <input class="form-control" type="text" name="username" placeholder="Username" required=""> <br>
-          <input class="form-control" type="password" name="password" placeholder="Password" required=""> <br>
-          <input class="btn btn-default" type="submit" name="submit" value="Login" style="color: black; width: 70px; height: 30px"> 
+          <input type="text" name="username" placeholder="Username" required=""> <br>
+          <input type="password" name="password" placeholder="Password" required=""> <br>
+          <input type="submit" name="submit" value="Login"> 
         </div>
       
-      <p style="color: white; padding-left: 15px;">
+      <p>
         <br><br>
-        <a style="color:yellow; text-decoration: none;" href="update_password.php">Forgot password?</a> &nbsp &nbsp &nbsp &nbsp &nbsp 
-        New to this website?<a style="color: yellow; text-decoration: none;" href="registration.php">&nbspSign Up</a>
+        <a href="update_password.php">Forgot password?</a>
+        New to this website?<a href="registration.php">Sign Up</a>
       </p>
     </form>
     </div>
@@ -148,6 +119,5 @@ label {
 
 
   ?>
-
 </body>
 </html>
