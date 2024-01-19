@@ -20,12 +20,7 @@
         <h1>User Login Form</h1><br>
       <form  name="login" action="" method="post">
         <b><p style ="padding-left: 50px ; font-size :15px; font-weight :700;"> Login as </p></b>
-
-        <input style ="margin-left:50px; width :18px;" type ="radio" name = "user" id="admin" value ="admin"> 
-        <label for= "admin"> Admin </label>
-        <input style ="margin-left:50px; width :18px;" type ="radio" name = "user" id="user" value ="user" checked=""> 
-        <label  for= "user">User </label>
-
+        
         <div class="login">
           <input type="text" name="username" placeholder="Username" required=""> <br>
           <input type="password" name="password" placeholder="Password" required=""> <br>
