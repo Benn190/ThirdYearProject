@@ -24,7 +24,8 @@ if (isset($_POST['register'])) {
         $user_id = pg_fetch_result($result, 0, 'user_id');
         session_start();
         $_SESSION['user_id'] = $user_id;
-        header('Location: '."./create_post.php");
+        $_SESSION['username'] = $username;
+        header('Location: '."./create_group.php");
     } else {
         echo "Error: " . pg_last_error($conn);
     }
