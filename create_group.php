@@ -1,6 +1,9 @@
 <?php
 session_start();
 require_once "connect_db.php";
+if (! isset($_SESSION["user_id"])){
+  header('Location: '."./register.php");
+}
 if (isset($_POST['listValues']) && isset($_POST["name"])) {
     $inputUsers = $_POST['listValues'];
     $groupName = $_POST['name'];
