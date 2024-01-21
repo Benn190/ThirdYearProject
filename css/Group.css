@@ -1,0 +1,24 @@
+.groupContainer{
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    padding: 10px;
+    
+}
+
+.group{
+    background-color: white;
+    padding: 20px;
+    margin: 20px;
+    font-size: 30px;
+    text-align: center;
+}
+
+
+.addGroup{
+    background-color: white;
+    padding: 20px;
+    background-image: ;
+    margin: 20px;
+    font-size: 30px;
+    text-align: center;
+}
