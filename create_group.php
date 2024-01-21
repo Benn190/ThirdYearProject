@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once "connect_db.php";
 if (isset($_POST['listValues']) && isset($_POST["name"])) {
     $inputUsers = $_POST['listValues'];
