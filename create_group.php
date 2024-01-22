@@ -27,7 +27,7 @@ if (isset($_POST['listValues']) && isset($_POST["name"])) {
       }
     }
 
-    
+pg_close($conn);
 
 }
 ?>
