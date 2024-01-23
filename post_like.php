@@ -7,15 +7,19 @@ if (! isset($_SESSION["user_id"])){
 if (isset($_POST['like']) && isset($_POST['post_id'])) {
     $user_id = $_SESSION['user_id'];
     $post_id = $_POST['post_id'];
+    
+    //Checks if the user has already liked the post
     $check_likeSTMT = pg_prepare($conn, "check_like", "SELECT * FROM likes WHERE user_id = $1 AND post_id = $2");
     $check_likeRESULT = pg_execute($conn, "check_like", array($user_id, $post_id));
     $alreadyLiked = pg_num_rows($check_likeRESULT) > 0;
 
     if ( ! $alreadyLiked) {
+        //If they have not already liked the post, add a like
         $add_likeSTMT = pg_prepare($conn, "add_like", "INSERT INTO likes (user_id, post_id) VALUES ($1, $2)");
         $add_likeRESULT = pg_execute($conn, "add_like", array($user_id, $post_id));
         echo "liking!";
     } else{
+        //else remove the like
         $remove_likeSTMT = pg_prepare($conn, "remove_like", "DELETE FROM likes WHERE user_id = $1 AND post_id = $2");
         $remove_likeRESULT = pg_execute($conn, "remove_like", array($user_id, $post_id));
         echo "removing like";
@@ -33,6 +37,7 @@ if (isset($_POST['like']) && isset($_POST['post_id'])) {
 <body>
 <form method='post' action='post_like.php'>
 <?php
+//hardcoded for testing
 $post_id = 10;
 echo "<input type='hidden' name='post_id' value='$post_id'>"
 ?>
