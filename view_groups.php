@@ -8,8 +8,7 @@ if (! isset($_SESSION["user_id"])){
   header('Location: '."./register.php");
 }
 #display groups which contanin user's id 
-$q = "SELECT * FROM groups WHERE id={$_SESSION[user_id]}
-ORDER BY post_date DESC";
+$q = "SELECT * FROM groups WHERE username = $1";
 $r = pg_query($conn, $q);
 
 if (pg_num_rows($r) > 0) {
