@@ -14,13 +14,15 @@ $r = pg_query($conn, $q);
 if (pg_num_rows($r) > 0) {
     while ($row = pg_fetch_assoc($r)) 
     {
-        echo '<div class="col-sm-12 col-md-4">
-        <p>'.$row['group_name'].'</p>
-        
-        
-    </div>';
+        $group = $row["group_name"];
+        echo "<div>";
+        echo "<h2>{$group}</h2>";
+        echo "</div>";
+      
     }
 }
+else
+echo "no groups yet..."
 
 
 pg_close($conn);
