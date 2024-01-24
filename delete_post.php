@@ -24,7 +24,8 @@ if (isset($_POST['like']) && isset($_POST['post_id'])) {
 <form method='post' action='delete_post.php'>
 <?php
 //hardcoded for testing
-$post_id = 10;
+$post_id = 13;
+echo $_SESSION['user_id'];
 echo "<input type='hidden' name='post_id' value='$post_id'>"
 ?>
 <input type='submit' name='delete' value='delete'>
