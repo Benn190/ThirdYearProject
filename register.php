@@ -25,7 +25,7 @@ if (isset($_POST['register'])) {
         session_start();
         $_SESSION['user_id'] = $user_id;
         $_SESSION['username'] = $username;
-        header('Location: '."./create_group.php");
+        header('Location: '."./delete_post.php");
     } else {
         echo "Error: " . pg_last_error($conn);
     }
