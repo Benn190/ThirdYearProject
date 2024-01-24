@@ -6,6 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <form action="delete_post.php" method="post"></form>
+    <input type="button" value="delete_post">
 </body>
 </html>
