@@ -1,15 +1,11 @@
 <?php
-// Start session
-session_start();
+    session_start();
+    if (!isset($_SESSION["user_id"])) {
+        header('Location: ' . "./register.php"); // Redirect the user to the register page if they have not already logged in
+    }
 
-// Connect to the database
-require_once "connect_db.php";
-
-// Redirect to register.php if the user is not logged in
-if (!isset($_SESSION["user_id"])) {
-    header('Location: ./register.php');
-    exit();
-}
+    // Assuming you have a database connection
+    require_once "connect_db.php";
 
 // Get user ID and prevent SQL injection
 $user_id = (int)$_SESSION["user_id"];
