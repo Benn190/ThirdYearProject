@@ -38,10 +38,19 @@ FOREIGN KEY (postID) REFERENCES post(postID),
 PRIMARY KEY (username, postID)
 );
 
+CREATE TABLE follows (
+username VARCHAR(35) NOT NULL,
+followee VARCHAR(35) NOT NULL,
+FOREIGN KEY username REFERENCES accounts(username),
+FOREIGN KEY followee REFERENCES accounts(username),
+PRIMARY KEY (username, followee)
+);
+
 CREATE TABLE messages (
 username VARCHAR(35) NOT NULL,
 recipient VARCHAR(35) NOT NULL,
 messageID AUTO INCREMENT NOT NULL,
+text VARCHAR(3000),
 FOREIGN KEY username REFERENCES accounts(username),
 FOREIGN KEY recipient REFERENCES accounts(username),
 PRIMARY KEY (username, recipient, messageID)
