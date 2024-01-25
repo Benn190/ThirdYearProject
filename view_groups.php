@@ -1,35 +1,43 @@
 <?php
-# opening session
+// Start session
 session_start();
-# connect to database
+
+// Connect to the database
 require_once "connect_db.php";
-# if user not logged in - display register.php page
-if (!isset($_SESSION["user_id"])){
-    header('Location: ' . './register.php');
+
+// Redirect to register.php if the user is not logged in
+if (!isset($_SESSION["user_id"])) {
+    header('Location: ./register.php');
     exit();
 }
-# display groups which contain user's id 
-$user_id = (int)$_SESSION["user_id"]; // Cast to integer to prevent SQL injection
 
-# display groups which contain user's id 
-$q = "SELECT * FROM groups WHERE userID=$user_id";
-$r = pg_query($conn, $q);
+// Get user ID and prevent SQL injection
+$user_id = (int)$_SESSION["user_id"];
 
-if ($r) {
-    if (pg_num_rows($r) > 0) {
-        while ($row = pg_fetch_assoc($r)) {
-            $group = $row["group_name"];
-            echo "<div>";
-            echo "<h2>{$group}</h2>";
-            echo "</div>";
-        }
-    } else {
-        echo "No groups yet...";
+// Prepare the SQL statement with a placeholder for the user ID
+$stmt = pg_prepare($conn, "select_user_groups", "SELECT * FROM groups WHERE userID=$1");
+if ($stmt === false) {
+    die("Error preparing statement");
+}
+
+// Execute the prepared statement with the user ID
+$result = pg_execute($conn, "select_user_groups", array($user_id));
+if ($result === false) {
+    die("Error executing statement");
+}
+
+// Check if there are any groups
+if (pg_num_rows($result) > 0) {
+    while ($row = pg_fetch_assoc($result)) {
+        $group = $row["group_name"];
+        echo "<div>";
+        echo "<h2>{$group}</h2>";
+        echo "</div>";
     }
-}
- else {
-    echo "Error in query: ";
+} else {
+    echo "No groups yet...";
 }
 
+// Close the database connection
 pg_close($conn);
 ?>
