@@ -26,8 +26,9 @@ if ($r) {
     } else {
         echo "No groups yet...";
     }
-} else {
-    echo "Error in query: " . pg_last_error($conn);
+}
+ else {
+    echo "Error in query: ";
 }
 
 pg_close($conn);
