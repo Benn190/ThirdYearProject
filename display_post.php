@@ -19,25 +19,24 @@
     // Assuming you have a database connection
     require_once "connect_db.php";
 
-    $query = "SELECT * FROM posts ORDER BY id DESC";
+    $query = "SELECT post_id, text, users.user_id, username, full_name  FROM posts INNER JOIN users ON users.user_id = posts.user_id ORDER BY post_id DESC";
     $result = pg_query($conn, $query);
 
     // Check connection
     if ($result) {
         // Output data of each row
         while ($row = pg_fetch_assoc($result)) {
-            $postTitle = $row["post"];
             $text = $row["text"];
             $username = $row["username"];
-            $name = $row["name"];
-            $profile = $row["profile"];
+            $full_name = $row["full_name"];
+            $post_id = $row["post_id"];
+            $post_image_path = "../post_images/post_image" . $post_id . ".png";
 
             // Display the post on the page
             echo "<div>";
-            echo "<h2>{$postTitle}</h2>";
-            echo "<h2>Author: {$name} (@{$username})</h2>";
+            echo "<h2>Author: {$full_name} (@{$username})</h2>";
             echo "<p>{$text}</p>";
-            echo "<img src='{$profile}' alt='Profile Picture'>";
+            echo "<img src=$post_image_path alt='Post Image'>";
             echo "</div>";
         }
     } else {
