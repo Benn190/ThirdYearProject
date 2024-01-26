@@ -11,17 +11,17 @@ if (!isset($_SESSION["user_id"])) {
 
         $id_1 = $_SESSION['user_id'];
         $id_2 = $_POST['id_2'];
-        $opend = 0;
+        $opened = 0;
 
         $sql = "SELECT * FROM chats
                 WHERE to_id = $1
                 AND   from_id = $2
                 ORDER BY chat_id ASC";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$id_1, $id_2]);
+        $stmt = pg_prepare($conn, "", $sql);
+        $result = pg_execute($conn, "", array($id_1, $id_2));
 
-        if ($stmt->rowCount() > 0) {
-            $chats = $stmt->fetchAll();
+        if (pg_num_rows($result) > 0) {
+            $chats = pg_fetch_all($result);
 
             # Looping through the chats
             foreach ($chats as $chat) {
@@ -33,14 +33,14 @@ if (!isset($_SESSION["user_id"])) {
                     $sql2 = "UPDATE chats
                             SET opened = $1
                             WHERE chat_id = $2";
-                    $stmt2 = $conn->prepare($sql2);
-                    $stmt2->execute([$opened, $chat_id]);
+                    $stmt2 = pg_prepare($conn, "", $sql2);
+                    $result2 = pg_execute($conn, "", array($opened, $chat_id));
 
                     ?>
                     <p class="ltext border rounded p-2 mb-1">
-                        <?= $chat['message'] ?>
+                        <?= htmlspecialchars($chat['message']) ?>
                         <small class="d-block">
-                            <?= $chat['created_at'] ?>
+                            <?= htmlspecialchars($chat['created_at']) ?>
                         </small>
                     </p>
                     <?php
@@ -52,3 +52,4 @@ if (!isset($_SESSION["user_id"])) {
     header("Location: ../../index.php");
     exit;
 }
+?>
