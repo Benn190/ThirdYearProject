@@ -17,19 +17,19 @@ if (!isset($_SESSION["user_id"])) {
         # Get the logged-in user's user_id from the SESSION
         $from_id = $_SESSION['user_id'];
 
-        $sql = "INSERT INTO chats (from_id, to_id, message) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $res = $stmt->execute([$from_id, $to_id, $message]);
+        $sql = "INSERT INTO chats (from_id, to_id, message) VALUES ($1, $2, $3)";
+        $stmt = pg_prepare($conn, "", $sql);
+        $res = pg_execute($conn, "", array($from_id, $to_id, $message));
 
         # If the message is inserted
         if ($res) {
 
             # Check if this is the first conversation between them
             $sql2 = "SELECT * FROM conversations
-                    WHERE (user_1 = ? AND user_2 = ?)
-                    OR    (user_2 = ? AND user_1 = ?)";
-            $stmt2 = $conn->prepare($sql2);
-            $stmt2->execute([$from_id, $to_id, $from_id, $to_id]);
+                    WHERE (user_1 = $1 AND user_2 = $2)
+                    OR    (user_2 = $1 AND user_1 = $2)";
+            $stmt2 = pg_prepare($conn, "", $sql2);
+            $stmt2->execute(array($from_id, $to_id, $from_id, $to_id));
 
             // Setting up the time Zone
             // It Depends on your location or your P.C. settings
@@ -38,11 +38,11 @@ if (!isset($_SESSION["user_id"])) {
 
             $time = date("h:i:s a");
 
-            if ($stmt2->rowCount() == 0) {
+            if (pg_num_rows($stmt2) == 0) {
                 # Insert them into conversations table
-                $sql3 = "INSERT INTO conversations(user_1, user_2) VALUES (?, ?)";
-                $stmt3 = $conn->prepare($sql3);
-                $stmt3->execute([$from_id, $to_id]);
+                $sql3 = "INSERT INTO conversations(user_1, user_2) VALUES ($1, $2)";
+                $stmt3 = pg_prepare($conn, "", $sql3);
+                $stmt3->execute(array($from_id, $to_id));
             }
             ?>
 
