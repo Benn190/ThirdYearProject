@@ -17,7 +17,7 @@ if (!isset($_SESSION["user_id"])) {
         # Get the logged-in user's user_id from the SESSION
         $from_id = $_SESSION['user_id'];
 
-        $sql = "INSERT INTO chats (from_id, to_id, message) VALUES ($1, $2, $3)";
+        $sql = "INSERT INTO chats (from_id, to_id, message) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $res = $stmt->execute([$from_id, $to_id, $message]);
 
@@ -26,10 +26,10 @@ if (!isset($_SESSION["user_id"])) {
 
             # Check if this is the first conversation between them
             $sql2 = "SELECT * FROM conversations
-                    WHERE (user_1 = $1 AND user_2 = $2)
-                    OR    (user_2 = $1 AND user_1 = $2)";
+                    WHERE (user_1 = ? AND user_2 = ?)
+                    OR    (user_2 = ? AND user_1 = ?)";
             $stmt2 = $conn->prepare($sql2);
-            $stmt2->execute([$from_id, $to_id]);
+            $stmt2->execute([$from_id, $to_id, $from_id, $to_id]);
 
             // Setting up the time Zone
             // It Depends on your location or your P.C. settings
@@ -40,7 +40,7 @@ if (!isset($_SESSION["user_id"])) {
 
             if ($stmt2->rowCount() == 0) {
                 # Insert them into conversations table
-                $sql3 = "INSERT INTO conversations(user_1, user_2) VALUES ($1, $2)";
+                $sql3 = "INSERT INTO conversations(user_1, user_2) VALUES (?, ?)";
                 $stmt3 = $conn->prepare($sql3);
                 $stmt3->execute([$from_id, $to_id]);
             }
@@ -58,3 +58,4 @@ if (!isset($_SESSION["user_id"])) {
     header("Location: ../../index.php");
     exit;
 }
+?>
