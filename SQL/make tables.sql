@@ -12,9 +12,9 @@ PRIMARY KEY (username)
 CREATE TABLE post (
 postID SERIAL NOT NULL,
 username VARCHAR(35) NOT NULL,
-likes INT,
 tags VARCHAR(255),
 text VARCHAR(3000) NOT NULL,
+filename VARCHAR(255),
 PRIMARY KEY (postID),
 FOREIGN KEY (username) REFERENCES accounts(username)
 );
@@ -32,7 +32,6 @@ username VARCHAR(35) NOT NULL,
 postID INTEGER NOT NULL,
 text VARCHAR(3000),
 timestamp DATE,
-likes INT,
 FOREIGN KEY (username) REFERENCES accounts(username),
 FOREIGN KEY (postID) REFERENCES post(postID),
 PRIMARY KEY (username, postID)
