@@ -1,3 +1,15 @@
+<?php
+session_start();
+    if (!isset($_SESSION["username"])) {
+        header('Location: ' . "./login.php");
+    }
+
+    require_once "../php/connect_db.php";
+
+    $username = $_SESSION["username"];
+
+
+?>
 <!DOCTYPE html>
 <html>
 
@@ -116,20 +128,35 @@
         <div class="wrapper">
             <section class="chat-area">
             <header>
-                <?php 
-                $user_id = mysqli_real_escape_string($conn, $_GET['user_id']);
-                $sql = mysqli_query($conn, "SELECT * FROM users WHERE username = {$username}");
-                if(mysqli_num_rows($sql) > 0){
-                    $row = mysqli_fetch_assoc($sql);
-                }else{
-                    header("location: users.php");
-                }
-                ?>
-                <a href="users.php" class="back-icon"><i class="fas fa-arrow-left"></i></a>
-                <img src="php/images/<?php echo $row['img']; ?>" alt="">
-                <div class="details">
-                <span><?php echo $row['fname']. " " . $row['lname'] ?></span>
-                <p><?php echo $row['status']; ?></p>
+            <?php
+$userDataSTMT = pg_prepare($conn, "user_data", "SELECT * FROM messages where username = $1");
+$userDataRESULT = pg_execute($conn, "user_data", array($username));
+
+$query = "SELECT messageID, messages.username 
+          FROM messages
+          INNER JOIN accounts ON accounts.username = messages.username 
+          WHERE accounts.username = $1
+          ORDER BY messageID DESC";
+
+$sql = pg_query_params($conn, $query, array($username));
+
+if (pg_num_rows($sql) > 0) {
+    while($row = pg_fetch_assoc($sql))
+    {
+        echo "";
+    }
+} 
+else {
+    echo "No messages";
+   # header("location: profile.php");
+    exit(); // Ensure that the script stops after the redirection
+}
+?>
+<a href="profile.php" class="back-icon"><i class="fas fa-arrow-left"></i></a>
+<img src="php/images/<?php echo $row['img']; ?>" alt="">
+<div class="details">
+    <span><?php echo $row['username'] . " " . $row['recipient'] ?></span>
+
                 </div>
             </header>
             <div class="chat-box">
