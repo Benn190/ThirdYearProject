@@ -7,7 +7,7 @@ session_start();
     require_once "../php/connect_db.php";
 
     $username = $_SESSION["username"];
-
+    
 
 ?>
 <!DOCTYPE html>
@@ -117,56 +117,78 @@ session_start();
                 </ul>
             </section>
         </nav>
-       
-       
-
-
-    
+  
     <main>
 
     <body>
-        <div class="wrapper">
+        <div>
             <section class="chat-area">
             <header>
             <?php
-$userDataSTMT = pg_prepare($conn, "user_data", "SELECT * FROM messages where username = $1");
+
+// Fetch user data
+$userDataSTMT = pg_prepare($conn, "user_data", "SELECT * FROM messages WHERE username = $1");
 $userDataRESULT = pg_execute($conn, "user_data", array($username));
+$userData = pg_fetch_assoc($userDataRESULT);
 
-$query = "SELECT messageID, messages.username 
-          FROM messages
-          INNER JOIN accounts ON accounts.username = messages.username 
-          WHERE accounts.username = $1
-          ORDER BY messageID DESC";
+// Check if user data exists
+if ($userData) {
+    $username = $userData['username'];
+    $recipient = $userData['recipient'];
 
-$sql = pg_query_params($conn, $query, array($username));
+    // Read messages
+    $stmt = pg_prepare($conn, "read_message", "SELECT * FROM messages WHERE username = $1 AND recipient = $2");
+    $result = pg_execute($conn, "read_message", array($username, $recipient));
 
-if (pg_num_rows($sql) > 0) {
-    while($row = pg_fetch_assoc($sql))
-    {
-        echo "";
+    if (pg_num_rows($result) > 0) {
+        while ($row = pg_fetch_assoc($result)) {
+            echo "<p>new message!</p><br> 
+                 <br> Recipient: {$row['recipient']}<br>
+                  Sender: {$row['username']}<br>";
+        }
+    } else {
+        echo "No messages";
     }
-} 
-else {
-    echo "No messages";
-   # header("location: profile.php");
-    exit(); // Ensure that the script stops after the redirection
+} else {
+    echo "User not found";
 }
-?>
-<a href="profile.php" class="back-icon"><i class="fas fa-arrow-left"></i></a>
-<img src="php/images/<?php echo $row['img']; ?>" alt="">
-<div class="details">
-    <span><?php echo $row['username'] . " " . $row['recipient'] ?></span>
 
-                </div>
-            </header>
+// Close the PostgreSQL connection
+pg_close($conn);
+?>
+
+</div>
+<div>
+<form action="../php/send_message.php" method="post">
+<div class="container-1">
+    <h1>Message</h1>
+    <hr>
+    <label for="recipient"><b>Select Recipient:</b></label>
+            <select name="recipient" id="recipient" required>
+                <option value="">Choose a recipient</option>
+                <option value="friend1">Friend 1</option>
+                <option value="friend2">Friend 2</option>
+        
+            </select>
+   
+            <label for="username"><b>$<?php echo "$username"; ?></b></label>
+    <input type="text" placeholder="Enter Recipient" name="recipient" id="recipient" required>
+    </div>
+    </header>
             <div class="chat-box">
 
             </div>
             <form action="#" class="typing-area">
-                <input type="text" class="incoming_id" name="incoming_id" value="<?php echo $user_id; ?>" hidden>
+                <input type="text" class="incoming_id" name="incoming_id" value="<?php echo $username; ?>" hidden>
                 <input type="text" name="message" class="input-field" placeholder="Type a message here..." autocomplete="off">
                 <button><i class="fab fa-telegram-plane"></i></button>
             </form>
+    <button type="submit" class="message">Send</button>
+</form>
+</div>
+
+                </div>
+            
             </section>
         </div>
      </main>
