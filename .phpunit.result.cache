@@ -1,0 +1,1 @@
+{"version":1,"defects":{"Sample::testTrueAsserrtsToTrue":3,"DatabaseTest::testDatabaseConnection":4},"times":{"Sample::testTrueAsserrtsToTrue":0,"DatabaseTest::testDatabaseConnection":0.256,"DatabaseIntegrationTest::testDatabaseConnection":0.256}}
