@@ -143,7 +143,8 @@ session_start();
             <?php
 
 // Read messages
-$stmt = pg_prepare($conn, "read_message", "SELECT * FROM messages WHERE username = $1 OR recipient = $1");
+$stmt = pg_prepare($conn, "read_message", "SELECT * FROM messages WHERE username = $1 OR recipient = $1 ORDER BY messageID DESC");
+
 $result = pg_execute($conn, "read_message", array($username));
 
 if (pg_num_rows($result) > 0) {
