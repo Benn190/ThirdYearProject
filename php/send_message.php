@@ -1,26 +1,33 @@
 <?php
 session_start();
+
 if (!isset($_SESSION["username"])) {
-    header('Location: ' . "./login.php");
+    header('Location: ./login.php');
+    exit();
 }
 
 require_once "../php/connect_db.php";
 
-$username = $_SESSION["username"];
+// Use the value from the hidden input field
+$username = $_POST['username'];
 
-$stmt = pg_prepare($conn, "sent_message", "INSERT INTO messages (username, recipient) VALUES ($1, $2) RETURNING messageID");
-$username = $_SESSION['username'];
 $recipient = $_POST['recipient'];
-$result = pg_execute($conn, "sent_message", array($username, $recipient));
-         if ($result) {
-            echo "Post created successfully!";
-            $postid = pg_fetch_result($result, 0, 'messageID');
+$text = $_POST['text'];
 
-        } else {
-            echo "Error: " . pg_last_error($conn);
-            die();
-        }
-        // Close the connection
-        pg_close($conn);
-        header('Location: '."../html/Messages.php");
-        ?>
+$stmt = pg_prepare($conn, "sent_message", "INSERT INTO messages (username, recipient, text) VALUES ($1, $2, $3) RETURNING messageID");
+$result = pg_execute($conn, "sent_message", array($username, $recipient, $text));
+
+if ($result) {
+    echo "Post created successfully!";
+    $messageID = pg_fetch_result($result, 0, 'messageID');
+} else {
+    echo "Error: " . pg_last_error($conn);
+    die();
+}
+
+// Close the connection
+pg_close($conn);
+
+header('Location: ../html/Messages.php');
+exit();
+?>

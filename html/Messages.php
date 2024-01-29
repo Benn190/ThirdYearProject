@@ -14,13 +14,30 @@ session_start();
 <html>
 
 <head>
+<div class="container">
+
+<form id ="messages" action="../php/send_message.php" method="post">
+
+<label for="recipient">FSent to:</label><br>
+  <input type="text" id="recipient" name="recipient"><br>
+ 
+  <label for="text">message:</label><br>
+  <input type="text" id="text" name="text">
+
+  <input type="text" class="username" name="username" value="<?php echo $username; ?>" hidden>
+  <button type="submit"><i class="fab fa-telegram-plane"></i></button>
+</form>
+</div>
+
     <title>Messages</title>
     <link rel="stylesheet" href="../css/Messages.css">
     <link rel="stylesheet" href="../css/StyleSheet.css">
     <link rel="stylesheet" href="../css/Home.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" 
-    integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+        integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <script src="../js/Home.js"></script>
+    <script src="../js/main.js"></script>
 </head>
 
 <!-- test commit -->
@@ -122,74 +139,37 @@ session_start();
 
     <body>
         <div>
-            <section class="chat-area">
             <header>
             <?php
 
-// Fetch user data
-$userDataSTMT = pg_prepare($conn, "user_data", "SELECT * FROM messages WHERE username = $1");
-$userDataRESULT = pg_execute($conn, "user_data", array($username));
-$userData = pg_fetch_assoc($userDataRESULT);
+// Read messages
+$stmt = pg_prepare($conn, "read_message", "SELECT * FROM messages WHERE username = $1 OR recipient = $1");
+$result = pg_execute($conn, "read_message", array($username));
 
-// Check if user data exists
-if ($userData) {
-    $username = $userData['username'];
-    $recipient = $userData['recipient'];
+if (pg_num_rows($result) > 0) {
+    echo "<p>New message!</p><br>"; // Display this only once
 
-    // Read messages
-    $stmt = pg_prepare($conn, "read_message", "SELECT * FROM messages WHERE username = $1 AND recipient = $2");
-    $result = pg_execute($conn, "read_message", array($username, $recipient));
+    while ($row = pg_fetch_assoc($result)) {
+        $text = $row["text"];
+        $sender = $row["username"];
+        $recipient = $row["recipient"];
 
-    if (pg_num_rows($result) > 0) {
-        while ($row = pg_fetch_assoc($result)) {
-            echo "<p>new message!</p><br> 
-                 <br> Recipient: {$row['recipient']}<br>
-                  Sender: {$row['username']}<br>";
-        }
-    } else {
-        echo "No messages";
+        echo "<br>Recipient: $recipient<br>
+              Sender: $sender<br>
+              Message: $text<br>";
     }
 } else {
-    echo "User not found";
+    echo "No messages";
 }
 
 // Close the PostgreSQL connection
 pg_close($conn);
 ?>
-
-</div>
-<div>
-<form action="../php/send_message.php" method="post">
-<div class="container-1">
-    <h1>Message</h1>
-    <hr>
-    <label for="recipient"><b>Select Recipient:</b></label>
-            <select name="recipient" id="recipient" required>
-                <option value="">Choose a recipient</option>
-                <option value="friend1">Friend 1</option>
-                <option value="friend2">Friend 2</option>
-        
-            </select>
-   
-            <label for="username"><b>$<?php echo "$username"; ?></b></label>
-    <input type="text" placeholder="Enter Recipient" name="recipient" id="recipient" required>
-    </div>
-    </header>
-            <div class="chat-box">
-
-            </div>
-            <form action="#" class="typing-area">
-                <input type="text" class="incoming_id" name="incoming_id" value="<?php echo $username; ?>" hidden>
-                <input type="text" name="message" class="input-field" placeholder="Type a message here..." autocomplete="off">
-                <button><i class="fab fa-telegram-plane"></i></button>
-            </form>
-    <button type="submit" class="message">Send</button>
-</form>
 </div>
 
-                </div>
+
+
             
-            </section>
         </div>
      </main>
 
