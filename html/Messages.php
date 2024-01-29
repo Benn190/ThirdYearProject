@@ -18,7 +18,7 @@ session_start();
 
 <form id ="messages" action="../php/send_message.php" method="post">
 
-<label for="recipient">FSent to:</label><br>
+<label for="recipient">Sent to:</label><br>
   <input type="text" id="recipient" name="recipient"><br>
  
   <label for="text">message:</label><br>
