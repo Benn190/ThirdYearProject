@@ -1,7 +1,4 @@
 <?php
-
-
-
 use PHPUnit\Framework\TestCase;
 class ChatSystem {
     private $db;
