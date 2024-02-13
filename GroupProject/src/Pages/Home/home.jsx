@@ -1,6 +1,5 @@
-import HomeMain from "./components/Home/home-main";
-import NavBar from "./components/navbar/navbar";
-
+import NavBar from "../../components/navbar/navbar";
+import HomeMain from "./home-main";
 function Home() {
     return (
         <>
@@ -9,5 +8,4 @@ function Home() {
         </>
     );
 }
-
 export default Home;
