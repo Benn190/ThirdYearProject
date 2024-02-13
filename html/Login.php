@@ -15,6 +15,7 @@
 
     <section id="loginSection">
         <!-- Title/Logo -->
+        
         <div>
             <h1>ShareSync</h1>
             <h1>Login</h1>
