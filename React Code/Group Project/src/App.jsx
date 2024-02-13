@@ -1,10 +1,11 @@
 import "./App.css";
 import Home from "./Home";
+import Group from "./Group"
 
 function App() {
     return (
         <>
-            <Home />
+            <Group/>
         </>
     );
 }
