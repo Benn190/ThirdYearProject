@@ -1,7 +1,7 @@
-import HomeFeed from "./home-feed";
-import HomeGroup from "./home-group-bar";
+import HomeFeed from "./components/home-feed";
+import HomeGroup from "./components/home-group-bar";
+import ProfileBar from "./components/home-profile-bar";
 import "./home-main.css";
-import ProfileBar from "./home-profile-bar";
 
 function HomeMain() {
     return (
