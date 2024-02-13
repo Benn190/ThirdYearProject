@@ -1,8 +1,14 @@
 import "./App.css";
-import Profile from "./Pages/Profile/profile";
+import ProfileMain from "./Pages/Profile/profile-main";
+import NavBar from "./components/navbar/navbar";
 
 function App() {
-    return <Profile />;
+    return (
+        <>
+            <NavBar />
+            <ProfileMain />
+        </>
+    );
 }
 
 export default App;

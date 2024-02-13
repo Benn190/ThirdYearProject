@@ -1,6 +1,53 @@
+import React, { useEffect, useState } from "react";
 import "./navbar.css";
 
 function NavBar() {
+    // State to manage dropdown visibility
+    const [isNavDropdownOpen, setNavDropdownOpen] = useState(false);
+    const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+    // Function to toggle Nav dropdown
+    const toggleNavDropdown = () => {
+        setNavDropdownOpen(!isNavDropdownOpen);
+    };
+
+    // Function to toggle Profile dropdown
+    const toggleProfileDropdown = () => {
+        setProfileDropdownOpen(!isProfileDropdownOpen);
+    };
+
+    // DARKMODE
+    const [isDarkMode, setDarkMode] = useState(false);
+
+    useEffect(() => {
+        // Retrieve dark mode preference from localStorage
+        const darkModePreference = localStorage.getItem("darkmode");
+
+        // Set the initial state of dark mode based on the preference
+        setDarkMode(darkModePreference === "true");
+
+        // Apply dark mode if the preference is 'true'
+        if (darkModePreference === "true") {
+            applyDarkMode();
+        }
+    }, []); // Empty dependency array ensures this effect runs once after mount
+
+    // Function to toggle dark mode
+    const toggleDarkMode = () => {
+        setDarkMode(!isDarkMode);
+
+        // Store the dark mode preference in localStorage
+        localStorage.setItem("darkmode", (!isDarkMode).toString());
+
+        // Toggle dark mode on the entire page
+        document.body.classList.toggle("darkmode");
+    };
+
+    // Function to apply dark mode initially
+    const applyDarkMode = () => {
+        document.body.classList.add("darkmode");
+    };
+
     return (
         <nav>
             <section>
@@ -110,7 +157,7 @@ function NavBar() {
                         <div className="dropdown">
                             <button
                                 className="dropButton"
-                                onClick="toggleDropdownNav()">
+                                onClick={toggleNavDropdown}>
                                 <svg
                                     width="24"
                                     height="24"
@@ -131,8 +178,11 @@ function NavBar() {
                                 </svg>
                             </button>
                             <div
-                                className="dropdown-content"
-                                id="dropdownContent">
+                                className={
+                                    isNavDropdownOpen
+                                        ? "dropdown-content active"
+                                        : "dropdown-content"
+                                }>
                                 <a href="#">Link 1</a>
                                 <a href="#">Link 2</a>
                                 <a href="#">Link 3</a>
@@ -146,11 +196,16 @@ function NavBar() {
                         <div className="dropdown">
                             <img
                                 className="nav-profile"
-                                onClick="toggleDropdownProfile()"
-                                src="../images/icons/Unknown_person.jpg"></img>
+                                onClick={toggleProfileDropdown}
+                                src="../images/icons/Unknown_person.jpg"
+                                alt=""
+                            />
                             <div
-                                className="dropdown-content-profile"
-                                id="dropdownContentProfile">
+                                className={
+                                    isProfileDropdownOpen
+                                        ? "dropdown-content-profile active"
+                                        : "dropdown-content-profile"
+                                }>
                                 <div className="dropdown-profile-icon">
                                     <a href="">
                                         <img
@@ -217,7 +272,9 @@ function NavBar() {
                                         </div>
                                         <input
                                             type="checkbox"
-                                            onClick="toggleDarkMode(this)"></input>
+                                            checked={isDarkMode}
+                                            onChange={toggleDarkMode}
+                                        />
                                     </div>
                                 </a>
                                 <a href="../php/logout_php.php">
