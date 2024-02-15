@@ -58,7 +58,8 @@
                 <label for="name">Full name:</label>
                 <input id="name" name="name" type="text" />
                 <label for="username">Username:</label>
-                <input id="username" name="username" required="" type="text" oninput="checkUsernameAvailability(this.value)"/>
+                <input id="username" name="username" required="" type="text"
+                    oninput="checkUsernameAvailability(this.value)" />
                 <span id="usernameAvailability"></span><br><br>
                 <label for="email">Email:</label>
                 <input id="email" name="email" required="" type="email" />
@@ -70,7 +71,7 @@
                 </div>
             </div>
             <div>
-                <input id="registerSubmit"£name="register" type="submit" value="Register" onload="" />
+                <input id="registerSubmit" £name="register" type="submit" value="Register" onload="" />
             </div>
         </form>
     </section>
@@ -79,7 +80,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const registerSection = document.querySelector("section:nth-child(2)");
-            const loginSection =document.querySelector("#loginSection");
+            const loginSection = document.querySelector("#loginSection");
             registerSection.style.visibility = "hidden";
             loginSection.style.visibility = "visible";
 
