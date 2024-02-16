@@ -5,7 +5,7 @@ import "./css/home-main.css";
 
 function HomeMain() {
     return (
-        <main>
+        <main className="homepage">
             <ProfileBar />
             <HomeFeed />
             <HomeGroup />

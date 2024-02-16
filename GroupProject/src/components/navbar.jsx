@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "./navbar.css";
 
 function NavBar() {
@@ -59,7 +60,7 @@ function NavBar() {
             <section>
                 <ul className="linksBar">
                     <li className="active">
-                        <a href="../html/Home.php" className="active">
+                        <Link to="/" className="active">
                             <svg
                                 width="24px"
                                 height="24px"
@@ -74,7 +75,7 @@ function NavBar() {
                                 />
                             </svg>
                             <span>Home</span>
-                        </a>
+                        </Link>
                     </li>
                     <li>
                         <a>
@@ -99,7 +100,7 @@ function NavBar() {
                         </a>
                     </li>
                     <li>
-                        <a href="../html/Group.php">
+                        <Link to="/group">
                             <svg
                                 width="800px"
                                 height="800px"
@@ -132,7 +133,7 @@ function NavBar() {
                                 />
                             </svg>
                             <span>Collabs</span>
-                        </a>
+                        </Link>
                     </li>
                     <li>
                         <a href="../html/Messages.php">
@@ -214,7 +215,7 @@ function NavBar() {
                                         <p>Name Surname</p>
                                     </a>
                                 </div>
-                                <a href="../html/Profile.php">
+                                <Link to="/profile">
                                     <button className="view-profile">
                                         <svg
                                             width="800px"
@@ -235,7 +236,7 @@ function NavBar() {
                                         </svg>
                                         <span>My Profile</span>
                                     </button>
-                                </a>
+                                </Link>
                                 <a href="../html/Settings.php">
                                     <button className="settings">
                                         <svg

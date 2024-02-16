@@ -1,5 +1,5 @@
-import NavBar from "../../components/navbar/navbar";
-import ProfileMain from "./profile-main";
+import NavBar from "../components/navbar";
+import ProfileMain from "./Profile/profile-main";
 
 function Profile() {
     return (

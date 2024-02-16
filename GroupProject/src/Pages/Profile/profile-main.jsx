@@ -5,10 +5,12 @@ import "./css/profile.css";
 function ProfileMain() {
     return (
         <>
-            <main>
-                <ProfileBanner />
-                <ProfileDisplayPost />
-            </main>
+            <body>
+                <main className="profilepage">
+                    <ProfileBanner />
+                    <ProfileDisplayPost />
+                </main>
+            </body>
         </>
     );
 }

@@ -1,5 +1,5 @@
-import NavBar from "../../components/navbar/navbar";
-import GroupMain from "./GroupMain";
+import NavBar from "../components/navbar";
+import GroupMain from "./Group/GroupMain";
 
 function Group() {
     return (

@@ -46,7 +46,7 @@
     --box-shadow: none;
 }
 
-main {
+main.grouppage {
     max-width: 1128px;
     width: 100%;
     margin-top: 125px;
