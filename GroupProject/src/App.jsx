@@ -8,15 +8,15 @@ import Profile from "./Pages/Profile/profile";
 
 function App() {
     return (
-        <Router>
-            <Switch>
-                <Route path="./Pages/Home/home" exact component={Home} />
-                <Route path="./Pages/Group/Group" component={Group} />
-                <Route path="./Pages/Login/login" component={Login} />
-                <Route path="./Pages/Profile/profile" component={Profile} />
-                <Route component={Home} />
-            </Switch>
-        </Router>
+            <Router>
+                <Switch>
+                    <Route path="./Pages/Home/home" exact component={Home} />
+                    <Route path="./Pages/Group/Group" component={Group} />
+                    <Route path="./Pages/Login/login" component={Login} />
+                    <Route path="./Pages/Profile/profile" component={Profile} />
+                    <Route component={Home} />
+                </Switch>
+            </Router>
     );
 }
 

@@ -3,6 +3,11 @@ import GroupContainer from "./GroupContainer";
 import "./css/Group.css";
 
 function GroupMain() {
-    return <main>Group</main>;
+    return (
+        <>
+            <GroupContainer />
+            <Friends />
+        </>
+    )
 }
 export default GroupMain;
