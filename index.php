@@ -10,7 +10,6 @@
 
 include 'comments.php';
 date_default_timezone_set("Europe/London");
-
 ?>
 
 <!DOCTYPE html>
@@ -34,6 +33,8 @@ echo" <form method = 'POST' action = '".setComments($conn)."' >
     <textarea name='message'></textarea> <br>
     <button type='submit' name = 'commentSubmit'>Comment</button>
 </form>";
+
+getComments($conn);
 ?>
 
 </body>
