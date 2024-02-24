@@ -29,17 +29,41 @@ function setComments($conn){
                 echo $row['date']."<br><br>";
                 echo nl2br($row['message']);
             echo  "</p>
-                <form class = 'edit-form' method = 'POST' action = 'editcomment.php'>
+            <form class = 'delete-form method = 'POST' action = '".deleteComments($conn)."'>
                     <input type='hidden' name='id' value ='" .$row['id']."' >
-                    <input type='hidden' name='user_id' value ='" .$row['user_id']."' >
+                    <button type = 'submit' name = 'commentDelete' >Delete</button>
+                </form>
+                <form class = 'edit-form method = 'POST' action = 'editcomment.php'>
+                    <input type='hidden' name='id' value ='" .$row['id']."' >
                     <input type='hidden' name='user_id' value ='" .$row['user_id']."' >
                     <input type='hidden' name='date' value ='" .$row['date']."' >
                     <input type='hidden' name='message' value ='" .$row['message']."' >
                     <button>Edit</button>
                 </form>
             </div>";
-
-
         }
     }
+    function editComments($conn){
+        if (isset ($_POST['commentSubmit'])){
+            $id =  $_POST['id'];
+            $user_id =  $_POST['user_id'];
+            $date =  $_POST['date'];
+            $message =  $_POST['message'];
+    
+            $query = "UPDATE comments SET message = '$message' WHERE id = '$id'" ;
+            $result = pg_query_params($conn, $query, array($id, $user_id, $date, $message));
+            header ("Location: index.php");
+    
+        }
+    }
+    function deleteComments ($conn){
+        if (isset ($_POST['commentDelete'])){
+            $id =  $_POST['id'];
+    
+            $query = "DELETE FROM comments WHERE id = '$id'";
+            $result = pg_query_params($conn, $query, array($id));
+            header ("Location: index.php");
+        }
+    }
+
 ?>
