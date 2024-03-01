@@ -270,7 +270,8 @@ ORDER BY COALESCE(MAX(subquery1.max_messageid), -1) DESC";
                             $user = $row["username"];
                             echo '<button class="chatter-list-user" onclick="changeChat(this)" userid=' . $row['username'] . '>
                 <img src="../images/icons/Unknown_person.jpg">
-                <p><a href="Messages.php?id=' . $row['username'] . '" role="button">' . $row['username'] . '</a></p>
+                <p><a href="Messages.php?id=' . $row['username'] . '" role="button">' . $row['username'] . '</a>
+               <div> <a href ="../php/add_follower.php?name=' . $row['username'] . '" > follow user </a></div></p>
             </button>';
                         }
                     }
