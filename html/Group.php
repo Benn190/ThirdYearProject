@@ -327,23 +327,10 @@ $username = $_SESSION["username"];
                     <img src="../images/cat.jpg" class="friendIcon">
                     <?php 
                     
-                    echo "<span>$followee</span>";
+                    echo "<span>$followee</span></friend>";
                 }}?>
-                </friend>
-                <friend>
-                    <img src="../images/cat.jpg" class="friendIcon">
-                    <span>Name</span>
-                </friend>
-                <friend>
-                    <img src="../images/cat.jpg" class="friendIcon">
-                    <span>Name</span>
-                </friend>
-                <friend>
-                    <img src="../images/cat.jpg" class="friendIcon">
-                    <span>Name</span>
-                </friend>
-
-
+                
+            
                 <a href="../html/friends.php">
                     <h1 class="viewMore">View All</h1>
                 </a>
