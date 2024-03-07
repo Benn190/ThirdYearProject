@@ -288,19 +288,27 @@ $name = pg_fetch_result($userDataRESULT, 0, "name");
             <div>
                 <div class="feed-create-post-container">
                     <a href="#" class="close" onclick="exitButton(this)"></a>
+
+
                     <form action="../php/create_post.php" method="post" enctype="multipart/form-data">
-                        <input type="file" class="feed-create-post-img" name="post_image" accept=".png, .jpg, .jpeg"
-                            required>
-                        <div>
-                            <h3>Caption</h3>
-                            <textarea id="text" name="text" rows="4" cols="50" maxlength="3000"
-                                class="feed-create-post-captions"></textarea>
+                        <div id ="postImg">
+                            <input type="file" class="feed-create-post-img" name="post_image" accept=".png, .jpg, .jpeg" required>
                         </div>
-                        <div>
+                        <div id = "postCaption">
+                            <h3>Caption</h3>
+                            <textarea id="text" name="text" rows="4" cols="50" maxlength="3000" class="feed-create-post-captions"></textarea>
+                        </div>
+
+                        <div id = "postTags">
                             <h3>tags will go here</h3>
                         </div>
-                        <input type="submit" name="submit_post" class="feed-create-post-submit" onclick="finishPost()">
+                        
+                        <div>
+                            <input type="submit" name="submit_post" class="feed-create-post-submit" onclick="finishPost()">
+                        </div>
                     </form>
+
+
                 </div>
             </div>
             <!-- End of Create Post Options -->
