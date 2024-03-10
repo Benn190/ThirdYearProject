@@ -153,6 +153,5 @@ canvas.addEventListener('mouseup', () => {
         saveState();  // Save state on mouse up
     }
 });
-
 // Initialize canvas state on load
 saveState();

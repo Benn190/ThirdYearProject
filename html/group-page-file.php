@@ -322,12 +322,6 @@ session_write_close();
                         <label for="fileName">File Name: </label>
                         <input type="text" name="fileName"  required>
                     </div>
-                    <div>
-                        <label for="background">Background(optional):</label>
-                        <input type="file" name="background" >
-                        <br>
-                    </div>
-                    <br>
                         <div>
                             <button type="submit">Create file</button>
                         </div>
