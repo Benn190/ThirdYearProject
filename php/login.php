@@ -3,7 +3,7 @@
 require_once "connect_db.php";
 
 // Start the session
-//session_start();
+session_start();
 
 // Get username and password from POST data
 $username = $_POST['username'];
