@@ -23,30 +23,48 @@
         <!-- Login Part -->
 
         <form action="../php/login.php" method="post" id="loginForm">
+    <div>
+        <div class="login-inputs">
             <div>
-                <div class="login-inputs">
-                    <div>
-                        <img src="../images/icons/login/user-svgrepo-com.svg" alt="">
-                        <input id="loginUsername" type="text" name="username" placeholder="Username" required="">
-                    </div>
-                    <div>
-                        <img src="../images/icons/login/lock-keyhole-minimalistic-svgrepo-com.svg" alt="">
-                        <input id="loginPassword" type="password" name="password" placeholder="Password" required="">
-                    </div>
-                </div>
-                <div>
-                    <a href="update_password.php">Forgot password?</a>
-                    <div class="option2">
-                        <p>New to this website? </p>
-                        <a class="to-signup-change-screen">Sign Up</a>
-                    </div>
-                </div>
+                <img src="../images/icons/login/user-svgrepo-com.svg" alt="">
+                <input id="loginUsername" type="text" name="username" placeholder="Username" required="">
             </div>
             <div>
-                <span id="loginMessage"></span>
-                <input id="loginSubmit" type="button" name="login" value="Login" onclick="loginProcess()">
+                <img src="../images/icons/login/lock-keyhole-minimalistic-svgrepo-com.svg" alt="">
+                <input id="loginPassword" type="password" name="password" placeholder="Password" required="">
             </div>
-        </form>
+        </div>
+        <div>
+            <a href="update_password.php">Forgot password?</a>
+            <div class="option2">
+                <p>New to this website? </p>
+                <a class="to-signup-change-screen">Sign Up</a>
+            </div>
+        </div>
+    </div>
+    <div>
+        <span id="loginMessage"></span>
+        <input id="loginSubmit" type="button" name="login" value="Login" onclick="loginProcess()">
+    </div>
+</form>
+
+<script>
+    // Function to handle form submission
+    function loginProcess() {
+        document.getElementById("loginForm").submit();
+    }
+
+    // Listen for Enter key press event
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            // Prevent default action of the Enter key
+            event.preventDefault();
+            // Submit the form
+            loginProcess();
+        }
+    });
+</script>
+
     </section>
 
     <section id="registerSection">
