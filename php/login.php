@@ -26,7 +26,6 @@ if (!password_verify($user_entered_password, $stored_password_hash)) {
     echo "Incorrect password";
 } else {
     // Start a session and store the username
-    session_id("userSession");
     session_start();
     $_SESSION['username'] = $username;
 
