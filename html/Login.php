@@ -44,7 +44,7 @@
             </div>
             <div>
                 <span id="loginMessage"></span>
-                <input type="button" name="login" value="Login" onclick="loginProcess()">
+                <input id="loginSubmit" type="button" name="login" value="Login" onclick="loginProcess()">
             </div>
         </form>
     </section>
