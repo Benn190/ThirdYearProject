@@ -38,4 +38,3 @@ if (!password_verify($user_entered_password, $stored_password_hash)) {
     header("Location: ../html/home.php");
     exit(); // Make sure to stop further execution after redirecting
 }
-?>
