@@ -32,7 +32,7 @@ if (!password_verify($user_entered_password, $stored_password_hash)) {
     );
     // Start a session and store the username
     session_start();
-    $_SESSION["userSession"]= $sessionArray;
+   // $_SESSION["userSession"]= $sessionArray;
     $_SESSION['username'] = $username;
 
     // Redirect to home.php
