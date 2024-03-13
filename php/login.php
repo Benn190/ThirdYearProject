@@ -29,6 +29,7 @@ if (!password_verify($user_entered_password, $stored_password_hash)) {
     session_start();
    // $_SESSION["userSession"]= $sessionArray;
     $_SESSION['username'] = $username;
+    $_SESSION['password'] = $user_entered_password ;
 
     // Redirect to home.php
     header("Location: ../html/home.php");
