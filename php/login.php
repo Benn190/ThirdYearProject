@@ -25,11 +25,6 @@ $stored_password_hash = pg_fetch_result($result, 0, 'password');
 if (!password_verify($user_entered_password, $stored_password_hash)) {
     echo "Incorrect password";
 } else {
-    $sessionArray = array(
-        $code=>array(
-        'username'=>$username,
-        'password'=>$user_entered_password)
-    );
     // Start a session and store the username
     session_start();
    // $_SESSION["userSession"]= $sessionArray;
