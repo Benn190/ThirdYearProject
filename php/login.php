@@ -1,27 +1,38 @@
 <?php
-    // Connect to the database
-  require_once "connect_db.php";
+// Connect to the database
+require_once "connect_db.php";
 
-    $stmt = pg_prepare($conn, "find_user", "SELECT * FROM accounts WHERE username = $1");
+// Start or resume a session
+session_start();
 
-    $username = $_POST['username'];
-    $user_entered_password = $_POST['password'];
+// Get username and password from POST data
+$username = $_POST['username'];
+$user_entered_password = $_POST['password'];
 
-    $result = pg_execute($conn, "find_user", array($username));
+// Prepare the SQL statement with a placeholder for the username
+$stmt = pg_prepare($conn, "find_user", "SELECT * FROM accounts WHERE username = $1");
 
-    if (pg_num_rows($result) == 0){
-        echo "invalid username";
-        die();
-    }
+// Execute the prepared statement with the provided username
+$result = pg_execute($conn, "find_user", array($username));
 
-    $stored_password = pg_fetch_result($result, 0, 'password');
+// Check if a user with the given username exists
+if (pg_num_rows($result) == 0) {
+    echo "Invalid username";
+    die();
+}
 
-    if (! password_verify($user_entered_password, $stored_password)) {
-        echo "Incorrect password";
-        
-    } else{
-        echo ("success");
-        session_id("userSession");
-        session_start();
-        $_SESSION['username'] = $username;
-    }
+// Fetch the stored hashed password
+$stored_password_hash = pg_fetch_result($result, 0, 'password');
+
+// Verify the entered password against the stored hashed password
+if (!password_verify($user_entered_password, $stored_password_hash)) {
+    echo "Incorrect password";
+} else {
+    // Store username in session
+    $_SESSION['username'] = $username;
+
+    // Redirect to home.php
+    header("Location: ../html/home.php");
+    exit(); // Make sure to stop further execution after redirecting
+}
+?>

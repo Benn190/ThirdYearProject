@@ -1,6 +1,19 @@
 function toggleDropdownNav() {
     var dropdownContent = document.getElementById("dropdownContent");
     dropdownContent.classList.toggle("active");
+
+    // Select all items in the dropdown
+    var items = dropdownContent.querySelectorAll(".dropdown-item");
+
+    // Loop through each item
+    for (var i = 0; i < items.length; i++) {
+        // Show the first 3 items, hide the rest
+        if (i < 3) {
+            items[i].style.display = "block";
+        } else {
+            items[i].style.display = "none";
+        }
+    }
 }
 
 function toggleDropdownProfile() {
@@ -66,6 +79,7 @@ function hasClass(element, className) {
 
 
 function handleLikeButtonClick(postid) {
+    console.log("handling")
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '../php/update_likes.php', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -74,7 +88,10 @@ function handleLikeButtonClick(postid) {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
                 var response = JSON.parse(xhr.responseText);
-                document.getElementsByClassName('likeCounter ' + postid)[0].textContent = response.likesCount;
+                var counters = document.getElementsByClassName('likeCounter ' + postid)
+                for (let counter of counters) {
+                    counter.innerHTML = response.likesCount;
+                };
             } else {
                 console.error('Error:', xhr.statusText);
             }
@@ -89,6 +106,23 @@ function handleLikeButtonClick(postid) {
         postid: postid
     }));
 }
+
+function handleSubmit(buttonId, formId, messageId) {
+    var messageInput = document.getElementById(messageId);
+    if (messageInput.value.trim() === "") {
+        alert("Please enter a message.");
+        return;
+    } else {
+        // Disable the button to prevent multiple submissions
+        document.getElementById(buttonId).disabled = true;
+
+        // Submit the form
+        document.getElementById(formId).submit();
+    }
+
+
+}
+
 
 
 

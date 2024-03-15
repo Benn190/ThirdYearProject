@@ -2,7 +2,7 @@
 require_once "../php/connect_db.php";
 //session_id("userSession");
 session_start();
-if (!isset($_SESSION["username"])) {
+if (!isset ($_SESSION["username"])) {
     header('Location: ' . "./login.php");
 }
 $login_username = $_SESSION["username"];
@@ -10,7 +10,7 @@ session_write_close();
 //session_id("groupSession");
 session_start();
 // Get passed product genre and assign it to a variable.
-if (isset($_GET['id'])) {
+if (isset ($_GET['id'])) {
     $id = $_GET['id'];
     $_SESSION["groupid"] = $id;
 }
@@ -171,11 +171,35 @@ session_write_close();
                             </svg>
                         </button>
                         <div class="dropdown-content" id="dropdownContent">
-                            <a href="#">Link 1</a>
-                            <a href="#">Link 2</a>
-                            <a href="#">Link 3</a>
-                            <a href="../html/Group.php">See More</a>
+                            <?php
+                            // Load initial notifications
+                            include_once "../php/load_notifications.php";
+                            ?>
+                            <a href="../html/Notifications.php">See More</a>
                         </div>
+
+                        <script>
+                            // Function to load more notifications
+                            function loadMoreNotifications() {
+                                // Make an AJAX request
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("GET", "load_notifications.php", true);
+                                xhr.onreadystatechange = function () {
+                                    if (xhr.readyState == 4 && xhr.status == 200) {
+                                        // Update the content of the dropdownContent div
+                                        document.getElementById("dropdownContent").innerHTML = xhr.responseText;
+                                    }
+                                };
+                                xhr.send();
+                            }
+
+                            // Attach click event listener to the "See More" link
+                            document.getElementById("seeMoreLink").addEventListener("click", function (event) {
+                                event.preventDefault(); // Prevent default link behavior
+                                loadMoreNotifications(); // Call the function to load more notifications
+                            });
+                        </script>
+                    </div>
                     </div>
                     <span>Notifications</span>
                 </li>
@@ -263,7 +287,7 @@ session_write_close();
                 <a href="group-page-file.php">
                     <li>Files</li>
                 </a>
-                <a href="./group-page-meeting.html">
+                <a href="./group-page-meeting.php">
                     <li>Meetings</li>
                 </a>
                 <a>
@@ -281,7 +305,9 @@ session_write_close();
             <div class="setting">
                 <div class='settings-title'>
                     <span>Settings</span>
-                    <span>Group Name</span>
+                    <span>
+                        <?php echo "$groupname"; ?>
+                    </span>
                 </div>
                 <div class='settings-box'>
                     <div class='settings-options'>
@@ -300,10 +326,14 @@ session_write_close();
                         <article>
                             <div class="wrapper">
                                 <h2>Change Name</h2>
-                                <!-- change this below to a form -->
+                                <h4 id="namechangestatus"></h4>
                                 <div class="change-container">
-                                    <input type="text" placeholder="New Group Name" class="change-group-name" />
-                                    <input type="submit" class="change-group-name" />
+                                    <form onsubmit="updateGroupName(event);" method="post">
+                                        <input type="hidden" name="groupid" value=<?php echo "$groupid" ?>>
+                                        <input type="text" placeholder="New Group Name" name="groupname"
+                                            class="change-group-name" />
+                                        <input type="submit" class="change-group-name" />
+                                    </form>
                                 </div>
                             </div>
                             <div class="wrapper">
@@ -333,7 +363,10 @@ session_write_close();
                         </article>
                         <article>
                             <h2>Are you sure you want to delete this group?</h2>
-                            <p>Put button to delete group</p>
+                            <form action="../php/delete_group.php" method="post">
+                                <input type="hidden" name=groupid value='<?php echo "$groupid" ?>'>
+                                <input class='delete-group' type="submit" value="Delete Group">
+                            </form>
                         </article>
                     </div>
                 </div>

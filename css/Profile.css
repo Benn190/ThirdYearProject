@@ -374,6 +374,11 @@ img.profile-info-groups-group {
     padding: 20px;
 }
 
+.profile a{
+    text-decoration: none;
+    color: var(--text);
+}
+
 .profile {
     display: inline-block;
     margin: 20px;
@@ -403,4 +408,8 @@ img.profile-info-groups-group {
     border: 1px solid var(--text);
     padding: 10px 20px;
     border-radius: 20px;
+}
+
+.follow-button a {
+    color: var(--text);
 }

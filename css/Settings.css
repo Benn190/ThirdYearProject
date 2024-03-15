@@ -58,6 +58,7 @@ main section {
 }
 
 #settingsHeading {
+    width: 100%;
     margin-top: 70px;
     padding: 20px;
     padding-bottom: 0px;
@@ -148,6 +149,14 @@ h3 {
     display: none;
 }
 
+#contactinfo {
+    display: none;
+}
+
+#general {
+    width: 100%;
+}
+
 .settingsContent p {
     margin: 20px;
     padding: 10px;
@@ -204,6 +213,10 @@ h3 {
 }
 
 #deleteAccount {
+    display: none;
+}
+
+#overview {
     display: none;
 }
 
@@ -278,6 +291,14 @@ input:checked + .slider:before {
 .personal-info {
     display: flex;
     flex-direction: column;
+}
+
+#deleteAccountBox {
+    z-index: 1;
+    display: none;
+    background-color: grey;
+    border-radius: 10px;
+    padding: 10px;
 }
 
 .avatar img {

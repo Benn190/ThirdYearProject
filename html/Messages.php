@@ -1,5 +1,5 @@
 <?php
-session_id("userSession");
+//session_id("userSession");
 session_start();
 if (!isset($_SESSION["username"])) {
     header('Location: ' . "./login.php");
@@ -11,6 +11,8 @@ $login_username = $_SESSION["username"];
 // Get passed product genre and assign it to a variable.
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
+    $messageReadSTMT = pg_prepare($conn, "messageRead", "UPDATE messages SET messageread = 1 WHERE username = $1 AND recipient = '$login_username'");
+    $messageReadRESULT = pg_execute($conn, "messageRead", array($id));
 } else {
     // Handle the case when 'id' is not set
     $id = 1;
@@ -162,10 +164,34 @@ if (isset($_GET['id'])) {
                             </svg>
                         </button>
                         <div class="dropdown-content" id="dropdownContent">
-                            <a href="#">Link 1</a>
-                            <a href="#">Link 2</a>
-                            <a href="#">Link 3</a>
-                            <a href="../html/Group.php">See More</a>
+    <?php
+    // Load initial notifications
+    include_once "../php/load_notifications.php";
+    ?>
+    <a href="../html/Notifications.php" >See More</a>
+</div>
+
+<script>
+    // Function to load more notifications
+    function loadMoreNotifications() {
+        // Make an AJAX request
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "load_notifications.php", true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                // Update the content of the dropdownContent div
+                document.getElementById("dropdownContent").innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send();
+    }
+
+    // Attach click event listener to the "See More" link
+    document.getElementById("seeMoreLink").addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent default link behavior
+        loadMoreNotifications(); // Call the function to load more notifications
+    });
+</script>
                         </div>
                     </div>
                     <span>Notifications</span>
@@ -249,19 +275,19 @@ if (isset($_GET['id'])) {
                 <?php
 
                 // displaying list of users ordered by last message received so the user who last sent a message to the logged in user is at the top of the list.
-                $usersListQuery = "SELECT subquery2.username, COALESCE(MAX(subquery1.max_messageid), -1) AS last_messageid
+                $usersListQuery = "SELECT subquery2.username, COALESCE(MAX(subquery1.max_messageid), -1) AS last_messageid, messageread
 FROM
-    (SELECT username, MAX(messageid) AS max_messageid
+    (SELECT username, MAX(messageid) AS max_messageid, messageread
      FROM messages
      WHERE recipient = '$login_username'
-     GROUP BY username
+     GROUP BY username, messageread
     ) AS subquery1
 RIGHT JOIN
     (SELECT username
      FROM accounts
     ) AS subquery2
 ON subquery1.username = subquery2.username
-GROUP BY subquery2.username
+GROUP BY subquery2.username, messageread
 ORDER BY COALESCE(MAX(subquery1.max_messageid), -1) DESC";
                 $usersListRESULT = pg_query($conn, $usersListQuery);
                 if ($usersListRESULT) {
@@ -270,8 +296,9 @@ ORDER BY COALESCE(MAX(subquery1.max_messageid), -1) DESC";
                             $user = $row["username"];
                             echo '<button class="chatter-list-user" onclick="changeChat(this)" userid=' . $row['username'] . '>
                 <img src="../images/icons/Unknown_person.jpg">
-                <p><a href="Messages.php?id=' . $row['username'] . '" role="button">' . $row['username'] . '</a></p>
-            </button>';
+                <p><a href="Messages.php?id=' . $row['username'] . '" role="button">' . $row['username'];
+                            if ($row["messageread"] == 0 && $row["last_messageid"] != -1)echo '***'; 
+                echo '</a></p></button>';
                         }
                     }
                     echo "</div>";

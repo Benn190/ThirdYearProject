@@ -1,3 +1,13 @@
+<?php
+//session_id("userSession");
+session_start();
+if (!isset($_SESSION["username"])) {
+    header('Location: ' . "./login.php");
+}
+
+require_once "../php/connect_db.php";
+$username = $_SESSION["username"];
+?>
 <!DOCTYPE html>
 <html class="dimmed">
 
@@ -5,9 +15,8 @@
     <title>Groups</title>
     <link rel="stylesheet" href="../css/Group.css">
     <link rel="stylesheet" href="../css/StyleSheet.css">
-    <link rel="stylesheet" href="../css/Group-page.css">
-    <link rel="stylesheet" href="../css/group-meetings.css">
-
+    <link rel="stylesheet" href="../css/Group-create.css">
+    <link rel="stylesheet" href="../css/Friends.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
@@ -15,38 +24,8 @@
 
     <script src="../js/main.js"></script>
     <script src="../js/darkmode.js"></script>
-    <script> src = "../js/meetings.js"</script>
     <script src="../js/navbar.js"></script>
     <script src="../js/createGroup.js"></script>
-
-    <script src="/socket.io/socket.io.js"></script>
-
-
-    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
-    <script>
-        const socket = io(); // This connects to your Socket.IO server
-    </script>
-
-
-    <script defer src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-    <script src="/socket.io/socket.io.js" defer></script>
-    <!-- Include your custom script -->
-    <script src="../js/script.js" defer></script>
-    <!-- Add any necessary CSS for video grid here or in external CSS files -->
-    <style>
-        #video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, 300px);
-            grid-auto-rows: 300px;
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-    </style>
-
 </head>
 
 <!-- test commit -->
@@ -189,11 +168,14 @@
                     <div class="dropdown">
                         <img class="nav-profile" onclick="toggleDropdownProfile()"
                             src="../images/icons/Unknown_person.jpg">
+                        </img>
                         <div class="dropdown-content-profile" id="dropdownContentProfile">
                             <div class="dropdown-profile-icon">
                                 <a href="">
                                     <img src="../images/icons/Unknown_person.jpg" alt="">
-                                    <p>Name Surname</p>
+                                    <p>
+                                        <?php echo "$username" ?>
+                                    </p>
                                 </a>
                             </div>
                             <a href="../html/Profile.php">
@@ -252,43 +234,61 @@
         </section>
     </nav>
     <!-- End of Nav -->
-
-    <!-- Left Side Bar for Options of what to do -->
-    <section class="body">
-        <aside class="left-bar">
-            <ul>
-                <a href="group-page.php">
-                    <li>
-                        Home
-                    </li>
-                </a>
-                <a href="group-page-file.php">
-                    <li>
-                        Files
-                    </li>
-                </a>
-                <a>
-                    <li>
-                        Meetings
-                    </li>
-                </a>
-                <a href="group-settings.php">
-                    <li>
-                        Settings
-                    </li>
-                </a>
-            </ul>
-        </aside>
+<body>
+    <?php
+$stmt = pg_prepare($conn, "followers", "SELECT followee FROM follows WHERE username=$1 ");
+ $result = pg_execute($conn, "followers", array($username)); 
+$numRows = pg_num_rows($result);
+$stmt2 = pg_prepare($conn, "followers2", "SELECT username FROM follows WHERE followee=$1");
 
 
+        ?>
+        <section id= "FriendsContentArea">
+                <h1>Friends List</h1>
+            <?php 
+            if ($numRows > 0) {
+               
+                //echo "<p>You follow: $numRows users</p>"; // Display total number of members
+                while ($row = pg_fetch_assoc($result)){
+                    $followee = $row['followee'];     
+                    
+                    $result2 = pg_execute($conn, "followers2", array($username)); 
+                    $numRows2 = pg_num_rows($result2);
+                    if( $numRows2>0){
+                        echo '<div>';
+                        while ($row2= pg_fetch_assoc($result2)){
+                        $follower = $row2['username'];
+                        if($follower ==$followee){
+                            echo  "<section id='friendDisplay'>";
+                            echo   "<img src='../images/cat.jpg' class='friendIcon'>";
+                            echo "<span><a href ='../html/Profile.php?id=$followee'><p>$followee</p><a></span><br>";
+                            echo "</section>";
+                }}}}}?>
+    <?php
+ $stmt = pg_prepare($conn, "followee", "SELECT * FROM follows WHERE username=$1");
+ $result = pg_execute($conn, "followee", array($username)); // Assuming $login_username is set properly
+ $numRows = pg_num_rows($result);
+ 
+?>
+        
+            
+            
+                    
 
-        <!-- Feed -->
-        <Feed>
-            <video id="localVideo" autoplay muted></video>
-            <video id="remoteVideo" autoplay></video>
-            <script src="script.js"></script>
-        </Feed>
+
+            </section>
+
+
+            </body>
+            </html>
+
+
+                
+
+
+
+    
+
+
 
 </body>
-
-</html>

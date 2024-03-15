@@ -1,84 +1,158 @@
-window.onload = function () {
-    var myCanvas = document.getElementById("myCanvas");
-    var ctx = myCanvas.getContext("2d");
+const imageLoader = document.getElementById('imageLoader');
+const canvas = document.getElementById('drawing-board');
+const toolbar = document.getElementById('toolbar');
+const ctx = canvas.getContext('2d');
+let undoStack = [];
+let redoStack = [];
 
-    // Fill Window Width and Height
-    myCanvas.width = window.innerWidth;
-    myCanvas.height = window.innerHeight;
 
-    // Set Background Color
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, myCanvas.width, myCanvas.height);
 
-    // Mouse Event Handlers
-    if (myCanvas) {
-        var isDown = false;
-        var canvasX, canvasY;
-        ctx.lineWidth = 5;
+// Remove style width and height assignments; directly set canvas size.
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+canvas.style.backgroundColor = 'white';
 
-        $(myCanvas)
-            .mousedown(function (e) {
-                isDown = true;
-                ctx.beginPath();
-                canvasX = e.pageX - myCanvas.offsetLeft;
-                canvasY = e.pageY - myCanvas.offsetTop;
-                ctx.moveTo(canvasX, canvasY);
-            })
-            .mousemove(function (e) {
-                if (isDown !== false) {
-                    canvasX = e.pageX - myCanvas.offsetLeft;
-                    canvasY = e.pageY - myCanvas.offsetTop;
-                    ctx.lineTo(canvasX, canvasY);
-                    ctx.strokeStyle = "#000";
-                    ctx.stroke();
-                }
-            })
-            .mouseup(function (e) {
-                isDown = false;
-                ctx.closePath();
-            });
-    }
+canvas.width = 800;
+canvas.height = 600;
 
-    // Touch Events Handlers
-    draw = {
-        started: false,
-        start: function (evt) {
+let isPainting = false;
+let lineWidth = 5;
 
-            ctx.beginPath();
-            ctx.moveTo(
-                evt.touches[0].pageX,
-                evt.touches[0].pageY
-            );
+// This function adjusts mouse coordinates properly considering the element's bounding box.
+function getMousePosition(event) {
+    const rect = canvas.getBoundingClientRect();
 
-            this.started = true;
+    // Scale mouse coordinates after they have been adjusted to be relative to the element
+    const scaleX = canvas.width / rect.width;    
+    const scaleY = canvas.height / rect.height;
 
-        },
-        move: function (evt) {
-
-            if (this.started) {
-                ctx.lineTo(
-                    evt.touches[0].pageX,
-                    evt.touches[0].pageY
-                );
-
-                ctx.strokeStyle = "#000";
-                ctx.lineWidth = 5;
-                ctx.stroke();
-            }
-
-        },
-        end: function (evt) {
-            this.started = false;
-        }
+    return {
+        x: (event.clientX - rect.left) * scaleX,
+        y: (event.clientY - rect.top) * scaleY
     };
+}
 
-    // Touch Events
-    myCanvas.addEventListener('touchstart', draw.start, false);
-    myCanvas.addEventListener('touchend', draw.end, false);
-    myCanvas.addEventListener('touchmove', draw.move, false);
+toolbar.addEventListener('click', e => {
+    if (e.target.id === 'clear') {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+});
 
-    // Disable Page Move
-    document.body.addEventListener('touchmove', function (evt) {
-        evt.preventDefault();
-    }, false);
-};
+toolbar.addEventListener('change', e => {
+    if (e.target.id === 'stroke') {
+        ctx.strokeStyle = e.target.value;
+    }
+    
+    if (e.target.id === 'lineWidth') {
+        lineWidth = e.target.value;
+    }
+});
+
+canvas.addEventListener('mousedown', (e) => {
+    isPainting = true;
+    const position = getMousePosition(e);
+    ctx.beginPath();
+    ctx.moveTo(position.x, position.y);
+});
+
+canvas.addEventListener('mousemove', (e) => {
+    if (!isPainting) {
+        return;
+    }
+    const position = getMousePosition(e);
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = 'round';
+    ctx.lineTo(position.x, position.y);
+    ctx.stroke();
+});
+
+canvas.addEventListener('mouseup', () => {
+    isPainting = false;
+});
+
+document.getElementById('save').addEventListener('click', () => {
+    const dataURL = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = 'canvas-image.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
+imageLoader.addEventListener('change', handleImage, false);
+
+function handleImage(e) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+            // Clear any existing content
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the new image
+            const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+            const x = (canvas.width / 2) - (img.width / 2) * scale;
+            const y = (canvas.height / 2) - (img.height / 2) * scale;
+            ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+            // Now the image is the background, any new drawing will be on top
+        }
+        img.src = event.target.result;
+    }
+    reader.readAsDataURL(e.target.files[0]);
+}
+
+function saveState() {
+    undoStack.push(canvas.toDataURL());
+    // Clear the redo stack whenever a new action is taken
+    redoStack = [];
+}
+
+function undoLastAction() {
+    if (undoStack.length === 0) return;
+
+    // Pop the latest state and push it into the redo stack
+    const prevState = undoStack.pop();
+    redoStack.push(canvas.toDataURL());
+
+    // Clear canvas and load the previous state
+    const img = new Image();
+    img.onload = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+    img.src = prevState;
+}
+
+
+function redoLastAction() {
+    if (redoStack.length === 0) return;
+
+    // Pop the latest state from the redo stack and push the current state into the undo stack
+    const nextState = redoStack.pop();
+    undoStack.push(canvas.toDataURL());
+
+    // Clear canvas and load the next state
+    const img = new Image();
+    img.onload = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+    img.src = nextState;
+}
+
+
+document.getElementById('undo').addEventListener('click', undoLastAction);
+document.getElementById('redo').addEventListener('click', redoLastAction);
+
+// Modify your existing event listeners to save state appropriately
+canvas.addEventListener('mouseup', () => {
+    if (isPainting) {
+        isPainting = false;
+        saveState();  // Save state on mouse up
+    }
+});
+
+// Initialize canvas state on load
+saveState();

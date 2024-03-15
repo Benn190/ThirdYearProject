@@ -1,13 +1,14 @@
 <?php
-session_id("userSession");
+//session_id("userSession");
 session_start();
-if (!isset($_SESSION["username"])) {
+if (!isset ($_SESSION["username"])) {
     header('Location: ' . "./login.php");
 }
 
 require_once "../php/connect_db.php";
 
 $username = $_SESSION["username"];
+session_write_close();
 
 $userDataSTMT = pg_prepare($conn, "user_data", "SELECT * FROM accounts where username = $1");
 $userDataRESULT = pg_execute($conn, "user_data", array($username));
@@ -27,7 +28,6 @@ $name = pg_fetch_result($userDataRESULT, 0, "name");
         integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <script src="../js/Home.js"></script>
     <script src="../js/darkmode.js"></script>
-    <script src="../js/main.js"></script>
     <script src="../js/navbar.js"></script>
 </head>
 
@@ -159,11 +159,36 @@ $name = pg_fetch_result($userDataRESULT, 0, "name");
                             </svg>
                         </button>
                         <div class="dropdown-content" id="dropdownContent">
-                            <a href="#">Link 1</a>
-                            <a href="#">Link 2</a>
-                            <a href="#">Link 3</a>
-                            <a href="../html/Group.php">See More</a>
+                            <?php
+                            // Load initial notifications
+                            include_once "../php/load_notifications.php";
+                            ?>
+                            <a href="../html/Notifications.php">See More</a>
                         </div>
+
+
+                        <script>
+                            // Function to load more notifications
+                            function loadMoreNotifications() {
+                                // Make an AJAX request
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("GET", "load_notifications.php", true);
+                                xhr.onreadystatechange = function () {
+                                    if (xhr.readyState == 4 && xhr.status == 200) {
+                                        // Update the content of the dropdownContent div
+                                        document.getElementById("dropdownContent").innerHTML = xhr.responseText;
+                                    }
+                                };
+                                xhr.send();
+                            }
+
+                            // Attach click event listener to the "See More" link
+                            document.getElementById("seeMoreLink").addEventListener("click", function (event) {
+                                event.preventDefault(); // Prevent default link behavior
+                                loadMoreNotifications(); // Call the function to load more notifications
+                            });
+                        </script>
+                    </div>
                     </div>
                     <span>Notifications</span>
                 </li>
@@ -279,9 +304,9 @@ $name = pg_fetch_result($userDataRESULT, 0, "name");
                 </button>
             </div>
             <div class='fyp-filter'>
-                <button>All Users</button>
+                <a href='Home.php?id=all'><button>All Users</button></a>
                 <span> - </span>
-                <button>Following</button>
+                <a href='Home.php?id=following'><button>Following</button></a>
             </div>
             <!-- End of Create Post Button-->
             <!-- Start of Create Post Options -->
@@ -291,15 +316,76 @@ $name = pg_fetch_result($userDataRESULT, 0, "name");
                     <form action="../php/create_post.php" method="post" enctype="multipart/form-data">
                         <input type="file" class="feed-create-post-img" name="post_image" accept=".png, .jpg, .jpeg"
                             required>
-                        <div>
+                        <div class="caption-container">
                             <h3>Caption</h3>
                             <textarea id="text" name="text" rows="4" cols="50" maxlength="3000"
                                 class="feed-create-post-captions"></textarea>
                         </div>
-                        <div>
-                            <h3>tags will go here</h3>
+                        <div class="tags-container">
+                            <h3>Tags</h3>
+                            <div class="tags-box">
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+                                <div><input type="checkbox" name="tag" value="tag" id="tag">
+                                    <label for="tag">Tag</label>
+                                </div>
+
+                            </div>
                         </div>
-                        <input type="submit" name="submit_post" class="feed-create-post-submit" onclick="finishPost()">
+                        <input value="Post" type="submit" name="submit_post" class="feed-create-post-submit"
+                            onclick="finishPost()">
                     </form>
                 </div>
             </div>
@@ -310,10 +396,16 @@ $name = pg_fetch_result($userDataRESULT, 0, "name");
             <!-- Start Post 1 -->
             <?php
             $postsListQuery = "SELECT postid, text, post.username, name  FROM post INNER JOIN accounts ON accounts.username = post.username ORDER BY postid DESC";
+            if (isset ($_GET["id"])) {
+                if ($_GET["id"] == "following") {
+                    $postsListQuery = "SELECT postid, text, post.username, name FROM post INNER JOIN accounts ON accounts.username = post.username INNER JOIN follows ON accounts.username = follows.followee WHERE follows.username = '$username' ORDER BY postid DESC";
+                }
+            }
             $postsListRESULT = pg_query($conn, $postsListQuery);
             $postLikesSTMT = pg_prepare($conn, "postLikes", "SELECT * FROM usertolikes where postid = $1");
+            $postTagsSTMT = pg_prepare($conn, "postTags", "SELECT tagname FROM tags where postid= $1");
             $postLikedByUserSTMT = pg_prepare($conn, "postLikedByUser", "SELECT * FROM usertolikes where postid = $1 AND username = $2");
-
+            $commentQuery = pg_prepare($conn, "comment", "SELECT* FROM comments Where postid = $1");
 
             if ($postsListRESULT) {
                 // Output data of each row
@@ -326,9 +418,12 @@ $name = pg_fetch_result($userDataRESULT, 0, "name");
                     $postLikesRESULT = pg_execute($conn, "postLikes", array($postid));
                     $likesCount = pg_num_rows($postLikesRESULT);
 
+                    $postTagsRESULT = pg_execute($conn, "postTags", array($postid));
+
                     $postLikedByUserRESULT = pg_execute($conn, "postLikedByUser", array($postid, $username));
                     $postLikedByUser = pg_num_rows($postLikedByUserRESULT) != 0;
-
+                    $commentResult = pg_execute($conn, "comment", array($postid));
+                    $commentNumb = pg_num_rows($commentResult);
                     echo "<post class='posts' id=$postid>";
                     echo " <prepost>
             <div class='post-column'>
@@ -379,46 +474,56 @@ $name = pg_fetch_result($userDataRESULT, 0, "name");
                     <h4>Comments</h4>
                     <div class='divider'></div>
                 </div>
-                <div class='comment-container'>
+
+                    
+                <div class='comment-container'>";
+
+                    if ($commentNumb > 0) {
+                        while ($row = pg_fetch_assoc($commentResult)) {
+                            $commenting_user = $row['username'];
+                            $comment = $row['text'];
+                            $date = $row['timestamp'];
+                            echo "
+                
                     <div class='comment-user-comment'>
                         <div class='user-container'>
-                            <a href='Profile.php?id=$poster_username'><img src='../images/icons/Unknown_person.jpg' class='post-avatar' /></a>
+                            <a href='Profile.php?id=$username'><img src='../images/icons/Unknown_person.jpg' class='post-avatar' /></a>
                             <div class='user-post-name'>
-                                <span>Michael Schumacher</span>
-                                <span>Comment - 22/01/23</span>
+                                <span>$commenting_user</span>
+                                <span>Comment - $date</span>
                             </div>
                         </div>
                         <div class='comment-like'>
-                            <button class='like icons' onclick='toggleHeart(this)'>
-                                <svg width='24px' height='24px' viewBox='0 0 24 24' fill='none'
-                                    xmlns='http://www.w3.org/2000/svg'>
-                                    <path
-                                        d='M2 9.1371C2 14 6.01943 16.5914 8.96173 18.9109C10 19.7294 11 20.5 12 20.5C13 20.5 14 19.7294 15.0383 18.9109C17.9806 16.5914 22 14 22 9.1371C22 4.27416 16.4998 0.825464 12 5.50063C7.50016 0.825464 2 4.27416 2 9.1371Z'
-                                        fill='red' />
-                                </svg>
-                            </button>
-                        </div>
+                        <button class='like icons' onclick='toggleHeart(this)'>
+                            <svg width='24px' height='24px' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                                <path d='M2 9.1371C2 14 6.01943 16.5914 8.96173 18.9109C10 19.7294 11 20.5 12 20.5C13 20.5 14 19.7294 15.0383 18.9109C17.9806 16.5914 22 14 22 9.1371C22 4.27416 16.4998 0.825464 12 5.50063C7.50016 0.825464 2 4.27416 2 9.1371Z' fill='red' />
+                            </svg>
+                        </button>
                     </div>
-
-                    <div>
-                        <div class='comment-text'>
-                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deserunt animi obcaecati
-                            quidem
-                            nostrum commodi tenetur?
-                        </div>
+                    </div>
+                        <div>
+                        <div class='comment-text'>$comment</div>
                         <div class='comment-options'>
                             <span>1 Like</span>
                             <a><button>Delete</button></a>
                         </div>
+                    </div>";
+                        }
+                    } else {
+                        echo "No comments";
+                    }
+                    ?>
+
                     </div>
-                    
-                    
-                </div>
-                <div class='comment-create-container'>
-                    <form>
-                        <input class='comment-create' type='text'>
-                    </form>
-                </div>
+                    <div class='comment-create-container'>
+                        <form action="../php/comments.php" method="post">
+                            <input class="comment-create" id="comment" name="text" type="text" required>
+                            <input type="hidden" id="postid" name="postid" value="<?php echo $postid; ?>">
+                            <button type="submit" name="commentSubmit">Comment</button>
+                        </form>
+                    </div>
+
+                    <?php echo "
             </div>
         </prepost>";
                     echo "<div class='feed-post'>";
@@ -469,32 +574,10 @@ $name = pg_fetch_result($userDataRESULT, 0, "name");
 
 
 
-        <!-- Start of Groups-->
-        <groups class="tile group">
-            <div id="tile3">
-                <?php
-                $groupsSTMT = pg_prepare($conn, "groups", "SELECT *FROM groups INNER
-                JOIN accounttogroup ON groups.groupid = accounttogroup.groupid WHERE username = $1 ");
-                $groupsRESULT = pg_execute($conn, "groups", array($username));
 
-                while ($row = pg_fetch_assoc($groupsRESULT)) {
-                    $groupid = $row['groupid'];
-                    $groupname = $row['groupname'];
-                    echo "<button class='groupButton'>
-                    <div class='placeholder-img'></div>
-                <a href='group-page.php?id=$groupid'>
-                    <p>$groupname</p</a>
-                    </button>";
-                }
-                ?>
-            </div>
-
-            <div id="viewMore">
-                <a href="../html/group.php">View More</a>
-            </div>
-        </groups>
-        <!-- End of Gorups -->
     </main>
+
+    <script src="../js/main.js"></script>
 </body>
 <?php pg_close($conn); ?>
 

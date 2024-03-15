@@ -1,7 +1,7 @@
 <?php
-session_id("userSession");
+//session_id("userSession");
 session_start();
-if (!isset($_SESSION["username"])) {
+if (!isset ($_SESSION["username"])) {
     header('Location: ' . "./login.php");
 }
 
@@ -154,11 +154,35 @@ $username = $_SESSION["username"];
                             </svg>
                         </button>
                         <div class="dropdown-content" id="dropdownContent">
-                            <a href="#">Link 1</a>
-                            <a href="#">Link 2</a>
-                            <a href="#">Link 3</a>
-                            <a href="../html/Group.php">See More</a>
+                            <?php
+                            // Load initial notifications
+                            include_once "../php/load_notifications.php";
+                            ?>
+                            <a href="../html/Notifications.php">See More</a>
                         </div>
+
+                        <script>
+                            // Function to load more notifications
+                            function loadMoreNotifications() {
+                                // Make an AJAX request
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("GET", "load_notifications.php", true);
+                                xhr.onreadystatechange = function () {
+                                    if (xhr.readyState == 4 && xhr.status == 200) {
+                                        // Update the content of the dropdownContent div
+                                        document.getElementById("dropdownContent").innerHTML = xhr.responseText;
+                                    }
+                                };
+                                xhr.send();
+                            }
+
+                            // Attach click event listener to the "See More" link
+                            document.getElementById("seeMoreLink").addEventListener("click", function (event) {
+                                event.preventDefault(); // Prevent default link behavior
+                                loadMoreNotifications(); // Call the function to load more notifications
+                            });
+                        </script>
+                    </div>
                     </div>
                     <span>Notifications</span>
                 </li>
@@ -239,21 +263,16 @@ $username = $_SESSION["username"];
     <main>
 
         <section class="create-container">
-            <div class="create-title">
-                <p>Welcome to the Collaboration Creation Menu – Your Gateway to Team Synergy!</p>
-            </div>
             <form action="../php/create_group.php" method="post">
+                <div class="create-title">
+                    <p>Welcome to the Collaboration Creation Menu – Your Gateway to Team Synergy!</p>
+                </div>
                 <div class="create-information">
                     <div id="name">
                         <p>Name</p>
                         <input type="text" id="groupname" name="groupname">
                     </div>
                     <input type="hidden" name="username" id="username" value="<?php echo $username; ?>">
-
-                    <!--<div id="desc">
-                    <p>Description</p>
-                    <textarea name="textarea"></textarea>
-                </div>-->
                 </div>
                 <div class="create-options">
                     <button type="button" onclick="closeCreate()">Cancel</button>
@@ -279,9 +298,11 @@ $username = $_SESSION["username"];
                     echo "<div>
                 <a href='group-page.php?id=$groupid'>
                     <img src='../images/cat.jpg' class='groupIcon'>
-                    <h1 class='groupName'>$groupname</h1></a>
-                    <a href='../php/delete_group.php?id=$groupid'>delete group</a>
-                    </div>";
+                    <h1 class='groupName'>$groupname</h1></a>";
+                    ?>
+
+                    </div>
+                    <?php
                 }
                 ?>
 
@@ -304,36 +325,54 @@ $username = $_SESSION["username"];
             </section>
         </aside>
 
+        <?php
+        $stmt = pg_prepare($conn, "followers", "SELECT followee FROM follows WHERE username=$1");
+        $result = pg_execute($conn, "followers", array($username));
+        $numRows = pg_num_rows($result);
+        $stmt2 = pg_prepare($conn, "followers2", "SELECT username FROM follows WHERE followee=$1 ");
 
 
-
-
+        ?>
         <bside class="friendBox">
             <h1 class="heading">Friends List</h1>
-            <section class="friendList">
-                <friend>
-                    <img src="../images/cat.jpg" class="friendIcon">
-                    <span>Name</span>
-                </friend>
-                <friend>
-                    <img src="../images/cat.jpg" class="friendIcon">
-                    <span>Name</span>
-                </friend>
-                <friend>
-                    <img src="../images/cat.jpg" class="friendIcon">
-                    <span>Name</span>
-                </friend>
-                <friend>
-                    <img src="../images/cat.jpg" class="friendIcon">
-                    <span>Name</span>
-                </friend>
+            <?php
+            if ($numRows > 0) {
+                echo '<section class="friendList">';
+                //echo "<p>You follow: $numRows users</p>"; // Display total number of members
+                while ($row = pg_fetch_assoc($result)) {
+                    $followee = $row['followee'];
 
+                    $result2 = pg_execute($conn, "followers2", array($username));
+                    $numRows2 = pg_num_rows($result2);
+                    if ($numRows2 > 0) {
+                        while ($row2 = pg_fetch_assoc($result2)) {
+                            $follower = $row2['username'];
+                            if ($follower == $followee) {
+                                ?>
 
-                <a href="../html/friends.php">
-                    <h1 class="viewMore">View All</h1>
-                </a>
-            </section>
+                                <friend>
+                                    <img src="../images/cat.jpg" class="friendIcon">
+                                    <?php
+
+                                    echo "<span><a href ='../html/Profile.php?id=$followee'><p>$followee</p><a></span></friend>";
+                            }
+                        }
+                    }
+                }
+            } ?>
+
         </bside>
+
+
+        <a href="../html/friends.php">
+            <h1 class="viewMore">View All</h1>
+        </a>
+        </section>
+        </bside>
+
+
+
+
 
 
 

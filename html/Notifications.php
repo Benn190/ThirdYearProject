@@ -1,39 +1,60 @@
+<?php
+//session_id("userSession");
+session_start();
+if (!isset($_SESSION["username"])) {
+    header('Location: ' . "./login.php");
+}
+
+require_once "../php/connect_db.php";
+
+$username = $_SESSION["username"];
+$account_username = $username;
+if (isset($_GET["id"])) {
+    $id = $_GET["id"];
+    $account_username = $id;
+}
+
+$userDataSTMT = pg_prepare($conn, "user_data", "SELECT * FROM accounts where username = $1");
+$userDataRESULT = pg_execute($conn, "user_data", array($account_username));
+$name = pg_fetch_result($userDataRESULT, 0, "name");
+$bio = pg_fetch_result($userDataRESULT, 0, "bio");
+$query = "SELECT postID, text, post.username, name  
+    FROM post 
+    INNER JOIN accounts ON accounts.username = post.username 
+    WHERE accounts.username = '$account_username'
+    ORDER BY postid DESC";
+
+
+$result = pg_query($conn, $query);
+?>
 <!DOCTYPE html>
 <html class="dimmed">
 
 <head>
-    <title>Groups</title>
-    <link rel="stylesheet" href="../css/Group.css">
+    <title>Notifications</title>
     <link rel="stylesheet" href="../css/StyleSheet.css">
-    <link rel="stylesheet" href="../css/Group-page.css">
-    <link rel="stylesheet" href="../css/Group-page-file.css">
-    <link rel="stylesheet" href="../css/group-editor.css">
-
-    <script type="text/JavaScript"
-        src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js?ver=1.4.2"></script>
-
+    <link rel="stylesheet" href="../css/Profile.css">
+    <link rel="stylesheet" href="../css/notifications.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
         integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
     <script src="../js/main.js"></script>
+    <script src="../js/Profile.js"></script>
     <script src="../js/darkmode.js"></script>
-    <script src="../js/createGroup.js"></script>
-    <script src="../js/GroupMemberBar.js"></script>
+
+
 </head>
 
-<!-- test commit -->
 
-<!-- test commit - branch demo -->
-
-<body>
+<body class="dimmed">
     <!-- Start of SubNav -->
     <subnav>
         <ul>
             <li>
                 <a href="Profile.php">
-                    <img src="../images/cat.jpg" class="nav-profile">
+                    <img src="../images/icons/Unknown_person.jpg" class="nav-profile">
                 </a>
             </li>
 
@@ -98,7 +119,7 @@
                         <img src="../images/icons/nav-icons/add-square-svgrepo-com.svg">
                     </a>
                 </li>
-                <li class="active">
+                <li>
                     <a href="../html/Group.php">
                         <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -150,11 +171,35 @@
                             </svg>
                         </button>
                         <div class="dropdown-content" id="dropdownContent">
-                            <a href="#">Link 1</a>
-                            <a href="#">Link 2</a>
-                            <a href="#">Link 3</a>
-                            <a href="../html/Group.php">See More</a>
+                            <?php
+                            // Load initial notifications
+                            include_once "../php/load_notifications.php";
+                            ?>
+                            <a href="../html/Notifications.php">See More</a>
                         </div>
+
+                        <script>
+                            // Function to load more notifications
+                            function loadMoreNotifications() {
+                                // Make an AJAX request
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("GET", "load_notifications.php", true);
+                                xhr.onreadystatechange = function () {
+                                    if (xhr.readyState == 4 && xhr.status == 200) {
+                                        // Update the content of the dropdownContent div
+                                        document.getElementById("dropdownContent").innerHTML = xhr.responseText;
+                                    }
+                                };
+                                xhr.send();
+                            }
+
+                            // Attach click event listener to the "See More" link
+                            document.getElementById("seeMoreLink").addEventListener("click", function (event) {
+                                event.preventDefault(); // Prevent default link behavior
+                                loadMoreNotifications(); // Call the function to load more notifications
+                            });
+                        </script>
+                    </div>
                     </div>
                     <span>Notifications</span>
                 </li>
@@ -168,7 +213,9 @@
                             <div class="dropdown-profile-icon">
                                 <a href="">
                                     <img src="../images/icons/Unknown_person.jpg" alt="">
-                                    <p>Name Surname</p>
+                                    <p>
+                                        <?php echo "$username" ?>
+                                    </p>
                                 </a>
                             </div>
                             <a href="../html/Profile.php">
@@ -228,27 +275,84 @@
     </nav>
     <!-- End of Nav -->
 
-    <!-- Left Side Bar for Options of what to do -->
-    <section class="body">
-        <aside>
-        </aside>
+    <main>
 
 
 
-        <!-- Feed -->
-        <feed>
-            <canvas id="myCanvas"></canvas>
-        </feed>
+        <div>
+            <section>
+                <h1>Notifications: </h1><br>
+                <?php
+                $notificationQuery = pg_prepare($conn, "notification", "SELECT * FROM notifications WHERE username = $1 ORDER BY notificationID DESC");
+                $notificationResult = pg_execute($conn, "notification", array($username));
+                $NumbRows = pg_num_rows($notificationResult);
+
+                $notifications = array(); // Array to hold all notifications
+                
+                if ($NumbRows > 0) {
+                    while ($row = pg_fetch_assoc($notificationResult)) {
+                        $notificationID = $row['notificationid'];
+                        $notification = $row['notifmessage'];
+                        $time = $row['timestamp'];
+                        $killtime = $row['killtime'];
+                        if (strtotime($killtime) >= strtotime(date("Y-m-d"))) {
+                            $notifications[] = array('notificationID' => $notificationID, 'notification' => $notification, 'time' => $time);
+                        }
+                    }
+                }
+
+                $followeeNot = pg_prepare($conn, "notification1", "SELECT DISTINCT notifications.* FROM notifications 
+JOIN follows 
+ON notifications.username = follows.followee WHERE follows.username = $1 ORDER BY notifications.notificationID DESC");
+
+                $followeeRes = pg_execute($conn, "notification1", array($username));
+
+                $NumbRows2 = pg_num_rows($followeeRes);
+
+                if ($NumbRows2 > 0) {
+                    while ($row = pg_fetch_assoc($followeeRes)) {
+                        $notificationID = $row['notificationid'];
+                        $notification = $row['notifmessage'];
+                        $user = $row['username'];
+                        $time = $row['timestamp'];
+                        $killtime = $row['killtime'];
+                        if ($username != $user && strtotime($killtime) >= strtotime(date("Y-m-d"))) {
+                            $notifications[] = array('notificationID' => $notificationID, 'notification' => "$user: $notification", 'time' => $time);
+                        }
+                    }
+                }
+
+                // Sort notifications by ID first, then by time
+                usort($notifications, function ($a, $b) {
+                    // Compare notificationID first
+                    $idComparison = $b['notificationID'] - $a['notificationID'];
+
+                    // If notificationID is equal, compare timestamps
+                    if ($idComparison == 0) {
+                        return strtotime($b['time']) - strtotime($a['time']);
+                    }
+
+                    return $idComparison;
+                });
+
+                if (count($notifications) > 0) {
+                    $counter = 0;
+                    foreach ($notifications as $notification) {
+                        $counter++;
+                        echo "<div style='padding: 10px 0px; width:500px;'>
+                        {$notification['time']}: {$notification['notification']}
+                        
+                        </div>";
+
+                    }
+                } else {
+                    echo "<div> <h1>No notifications yet...</h1></div>";
+                }
+                ?>
 
 
 
-        <!--  Right Side Bar for Members -->
-        <aside class="right-bar active">
-        </aside>
-    </section>
+            </section>
+        </div>
 
-
-    <script src="../js/group-canvas.js"></script>
 </body>
-
-</html>

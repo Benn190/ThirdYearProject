@@ -1,7 +1,7 @@
 <?php
 require_once "../php/connect_db.php";
 
-session_id("userSession");
+//session_id("userSession");
 session_start();
 if (!isset($_SESSION["username"])) {
     header('Location: ' . "./login.php");
@@ -162,10 +162,34 @@ session_write_close();
                             </svg>
                         </button>
                         <div class="dropdown-content" id="dropdownContent">
-                            <a href="#">Link 1</a>
-                            <a href="#">Link 2</a>
-                            <a href="#">Link 3</a>
-                            <a href="../html/Group.php">See More</a>
+    <?php
+    // Load initial notifications
+    include_once "../php/load_notifications.php";
+    ?>
+    <a href="../html/Notifications.php">See More</a>
+</div>
+
+<script>
+    // Function to load more notifications
+    function loadMoreNotifications() {
+        // Make an AJAX request
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "load_notifications.php", true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                // Update the content of the dropdownContent div
+                document.getElementById("dropdownContent").innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send();
+    }
+
+    // Attach click event listener to the "See More" link
+    document.getElementById("seeMoreLink").addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent default link behavior
+        loadMoreNotifications(); // Call the function to load more notifications
+    });
+</script>
                         </div>
                     </div>
                     <span>Notifications</span>
@@ -254,7 +278,7 @@ session_write_close();
                 <a>
                     <li>Files</li>
                 </a>
-                <a href="group-page-meeting.html">
+                <a href="group-page-meeting.php">
                     <li>Meetings</li>
                 </a>
                 <a href="group-settings.php">
@@ -271,30 +295,47 @@ session_write_close();
         <feed>
             <section class="container-file">
                 <section class="files-options">
+                    
                     <a href="group-editor.php">
-                        <button class="new-file option-button">
-                            New File
-                        </button>
+                    <button class="new-file option-button">
+                        New File
+                    </button>
                     </a>
+                    
                     <button class="delete-file option-button">
                         Delete File
                     </button>
+            
+                    <button class="canvas-file option-button" onclick="newCanvas()" >
+                        New Canvas File
+                    </button>
+             
+                    <br>
+
+                    
+
                 </section>
+                <section id = "newCanvasContent">
+                    <form id="newCanvas" action="group-canvas.php" >
+
+                    <div>
+                        <label for="fileName">File Name: </label>
+                        <input type="text" name="fileName"  required>
+                    </div>
+                    <div>
+                        <label for="background">Background(optional):</label>
+                        <input type="file" name="background" >
+                        <br>
+                    </div>
+                    <br>
+                        <div>
+                            <button type="submit">Create file</button>
+                        </div>
+                    </form>
+                    
+                </section>
+
                 <section class="file-container" id="fileContainer">
-                    <div class="folder-container" onclick="openFolder(this)" folderid="Bid1">
-                        <i class="fa fa-folder" aria-hidden="true"></i>
-                        <span id="Bid1">Files</span>
-                    </div>
-                    <!-- Add more Files as needed -->
-                    <div class="folder-container" onclick="openFolder(this)" folderid="main.txt">
-                        <i class="fa fa-file" aria-hidden="true"></i>
-                        <span id="main.txt">main.txt</span>
-                    </div>
-                    <!-- Add more Files as needed -->
-                    <div class="folder-container" onclick="openFolder(this)" folderid="art">
-                        <i class="fa fa-paint-brush" aria-hidden="true"></i>
-                        <span id="art">art</span>
-                    </div>
                     <?php
                     $get_filesSTMT = pg_prepare($conn, "get_files", "SELECT filename FROM files WHERE groupid = $1");
                     $get_filesRESULT = pg_execute($conn, "get_files", array($groupid));
