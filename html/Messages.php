@@ -328,13 +328,17 @@ include_once "../php/load_messages.php";
     loadMessages();
 </script>
 
-<form class="chatter-send-message" id="sendMessageForm">
-    <input type="hidden" id="recipient" name="recipient" value="<?php echo $id; ?>">
-    <input type="text" id="messageText" name="text" required>
-    <input type="hidden" class="username" name="username" value="<?php echo $login_username; ?>">
-    <button type="button" id="Submmit"><i class="fab fa-telegram-plane"></i></button>
-</form>
 
+<form class="chatter-send-message" id="messages" action="../php/send_message.php" method="post">
+<input type="text" id="recipient" name="recipient" value="<?php echo $id; ?>" hidden
+    style="display:none;">
+
+<input type="text" id="text" name="text" required="">
+
+<input type="text" class="username" name="username" value="<?php echo $login_username; ?>" hidden
+    style="display:none;">
+<button type="submit"><i class="fab fa-telegram-plane"></i></button>
+</form>
 
 
 
