@@ -369,20 +369,42 @@ ORDER BY COALESCE(MAX(subquery1.max_messageid), -1) DESC";
 
                     ?>
 
+<form id="messageForm">
+    <input type="hidden" name="username" value="<?php echo $_SESSION['username']; ?>">
+    <input type="text" name="recipient" placeholder="Recipient">
+    <textarea name="text" placeholder="Your message"></textarea>
+    <button type="submit">Send</button>
+</form>
 
+<!-- JavaScript for AJAX -->
+<script>
+document.getElementById("messageForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
 
-                <form class="chatter-send-message" id="messages" action="../php/send_message.php" method="post">
+    // Get form data
+    var formData = new FormData(this);
 
-
-                    <input type="text" id="recipient" name="recipient" value="<?php echo $id; ?>" hidden
-                        style="display:none;">
-
-                    <input type="text" id="text" name="text" required="">
-
-                    <input type="text" class="username" name="username" value="<?php echo $login_username; ?>" hidden
-                        style="display:none;">
-                    <button type="submit"><i class="fab fa-telegram-plane"></i></button>
-                </form>
+    // Send AJAX request
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/php/send_message.php", true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                // Request was successful
+                // Handle success response
+                alert("Message sent successfully!");
+                // Optionally, redirect to Messages.php or update UI
+                window.location.href = "../html/Messages.php?id=" + formData.get("recipient");
+            } else {
+                // Request failed
+                // Handle error response
+                alert("Error: " + xhr.responseText);
+            }
+        }
+    };
+    xhr.send(formData);
+});
+</script>
             </div>
         </div>
 
