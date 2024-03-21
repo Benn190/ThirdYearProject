@@ -309,8 +309,8 @@ ORDER BY COALESCE(MAX(subquery1.max_messageid), -1) DESC";
                 ?>
 
 
-                <div class="chatter-box">
-                    <!-- Chat box -->
+
+<div class="chatter-box">
                     <?php
 
                     $stmt = pg_prepare($conn, "read_message", "SELECT * FROM messages WHERE
@@ -360,7 +360,7 @@ ORDER BY COALESCE(MAX(subquery1.max_messageid), -1) DESC";
                                 }
                             }
                         }
-                        echo "</div>";
+                        echo "";
                     } else {
                         echo 'No Messages Yet';
                     }
@@ -368,13 +368,16 @@ ORDER BY COALESCE(MAX(subquery1.max_messageid), -1) DESC";
 
 
                     ?>
-
-<form id="messageForm">
+<div>
+<form class="chatter-send-message" id="messageForm">
     <input type="hidden" name="username" value="<?php echo $_SESSION['username']; ?>">
-    <input type="text" name="recipient" placeholder="Recipient">
+    <input type="text" id="recipient" name="recipient" value="<?php echo $id; ?>" hidden
+                        style="display:none;">
     <textarea name="text" placeholder="Your message"></textarea>
     <button type="submit">Send</button>
 </form>
+
+                </div>
 
 <!-- JavaScript for AJAX -->
 <script>
@@ -390,9 +393,7 @@ document.getElementById("messageForm").addEventListener("submit", function(event
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
-                // Request was successful
-                // Handle success response
-                alert("Message sent successfully!");
+                
                 // Optionally, redirect to Messages.php or update UI
                 window.location.href = "../html/Messages.php?id=" + formData.get("recipient");
             } else {
@@ -410,7 +411,6 @@ document.getElementById("messageForm").addEventListener("submit", function(event
 
 
     </main>
-
 
 
 </body>
