@@ -220,7 +220,7 @@ div.chatter-info {
 }
 
 .chatter-box {
-    position: relative;
+    position: relative; /* Add this line to set position relative */
     height: 100%;
     box-sizing: border-box;
     width: 100%;
@@ -231,16 +231,14 @@ div.chatter-info {
     flex-direction: column;
     flex: 3;
     overflow: hidden; /* Add this line to prevent overflow from the absolutely positioned element */
-    bottom: 10;
 }
 
 .chatter-send-message {
-    position: absolute;
-    bottom: 0;
-    left: 0;
     box-sizing: border-box;
     height: 50px;
     width: 100%; /* Set width to 100% to match parent's width */
     display: flex;
     gap: 10px;
 }
+
+
