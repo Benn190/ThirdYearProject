@@ -1,0 +1,1 @@
+ /Users/kacpergajdarski/Documents/repos/ThirdYearProject/Companysite/Company\ Site/companysite/.dart_tool/flutter_build/d42fa694dd715c8c7eadd33cb1495f93/native_assets.yaml: 
