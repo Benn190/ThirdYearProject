@@ -78,15 +78,20 @@ $name = pg_fetch_result($userDataRESULT, 0, "name");
                 <i class="fa fa-search"></i>
             </form>
             <script>
-                document.getElementsByClass("fa fa-search").addEventListener("click", function(event) {
-                     document.getElementById("searchForm").submit(); 
-                }
-                document.getElementById("searchQuery").addEventListener("keyup", function(event) {
-                    if (event.keyCode === 13) {
+                function submitForm(event) {
+                    var searchWord = document.getElementById("searchInput").value;
+                    var regex = /[;'"\\]/;
+                    if (regex.test(searchWord)) {
+                        alert("Invalid characters detected. Please remove special characters.");
                         event.preventDefault();
-                        document.getElementById("searchForm").submit();
                     }
-                });
+                }
+                document.getElementById("searchForm").addEventListener("keyup", function(event) {
+                    if (event.keyCode === 13) {
+                        submitForm(event);
+                    }
+                })
+                ;
             </script>
         </section>
         <section>
@@ -321,12 +326,12 @@ $name = pg_fetch_result($userDataRESULT, 0, "name");
 
                 // exact match
                 $postsListQuery = "SELECT postid, text, post.username, name  FROM post INNER JOIN accounts ON accounts.username = post.username WHERE text = '$search_query' ORDER BY postid DESC";
-                $profileSearchListQuery = "SELECT username, name FROM accounts WHERE name = '$search_query'";
+                $profileSearchListQuery = "SELECT username, name FROM accounts WHERE name = '$search_query' OR username = '$search_query'";
                 $groupSearchListQuery = "SELECT groups.groupid, managerid, groupname, description FROM groups INNER JOIN accounttogroup ON accounttogroup.groupid = groups.groupid WHERE groupname = '$search_query' AND accounttogroup.username = '$username' ORDER BY groupId DESC";
                 
                 // like matches
                 $postsLikeListQuery = "SELECT postid, text, post.username, name  FROM post INNER JOIN accounts ON accounts.username = post.username WHERE text LIKE '%$search_query%' AND text != '$search_query' ORDER BY postid DESC";
-                $profileLikeSearchListQuery = "SELECT username, name FROM accounts WHERE name LIKE '%$search_query%'AND name != '$search_query'";
+                $profileLikeSearchListQuery = "SELECT username, name FROM accounts WHERE (name LIKE '%$search_query%' OR username LIKE '%$search_query%')AND name != '$search_query' AND username != '$search_query'";
                 $groupLikeSearchListQuery = "SELECT groups.groupid, managerid, groupname, description FROM groups INNER JOIN accounttogroup ON accounttogroup.groupid = groups.groupid WHERE groupname LIKE '$search_query' AND groupname != '$search_query' AND username = '$username' ORDER BY groupId DESC";
                                 
                 // tags match
@@ -1543,7 +1548,7 @@ $name = pg_fetch_result($userDataRESULT, 0, "name");
                 }
 
             } else {
-                echo "No posts found 2";
+                echo "No posts found";
             }
 
             // Close the database connection
